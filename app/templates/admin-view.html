@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+<div class="navbar">
+    <h1>Panel del Administrator</h1>
+    <div>
+        <a href="#">Usuarios</a>
+        <a href="#">Cursos</a>
+        <a href="/">Cerrar sesión</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Administrar usuarios</h2>
+    <p class="muted">Vista general del administrador</p>
+
+    <table>
+        <tr>
+            <th>Nombre de usuario</th>
+            <th>Rol</th>
+        </tr>
+        <tr>
+            <td>{{ current_user.nombre_usuario }}</td>
+            <td>Administrador</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

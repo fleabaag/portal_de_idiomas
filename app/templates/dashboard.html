@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+<div class="navbar">
+    <h1>Panel de Estudiante/Maestro</h1>
+    <div>
+        <a href="#">Cursos</a>
+        <a href="#">Perfil</a>
+        <a href="/">Cerrar Sesión</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Información del usuario</h2>
+    <p class="muted">Esta es la vista determinada para el usuario</p>
+
+    <table>
+        <tr>
+            <th>Usuario</th>
+            
+        </tr>
+        <tr>
+            <td>{{ current_user.nombre_usuario }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

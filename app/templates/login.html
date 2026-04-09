@@ -1,0 +1,59 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(function () {
+        const alerts = document.querySelectorAll(".flash-alert");
+
+        alerts.forEach(function(alert) {
+            alert.style.transition = "opacity 0.5s ease";
+            alert.style.opacity = "0";
+
+            setTimeout(function () {
+                alert.remove();
+            }, 300);
+        });
+
+    }, 3000);
+});
+</script>
+
+{% extends "base.html" %}
+
+{% block navbar %}
+<div class="navbar">
+    <h1>Portal de Idiomas</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 5rem auto;">
+    <div class="card">
+        <h2>Login</h2>
+        <p class="muted">Accede a tu cuenta</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert alert ">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <div class="form-group">
+                <label>Nombre de usuario</label>
+                <input type="text" name="nombre_usuario" required>
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" name="contrasena" required>
+            </div>
+
+            <button type="submit">Iniciar sesión</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
