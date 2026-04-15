@@ -14,11 +14,11 @@ class Usuario(db.Model, UserMixin):
     rol = db.Column(db.Enum(RolUsuario), nullable=False)
     fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # 🔐 Set password (hash it)
+    
     def set_password(self, raw_password):
         self.password = generate_password_hash(raw_password)
 
-    # 🔐 Check password
+    
     def check_password(self, raw_password):
         return check_password_hash(self.password, raw_password)
     # Herencia
