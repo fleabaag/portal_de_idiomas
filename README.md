@@ -12,7 +12,7 @@ Colaboradores:
 ## Ejecutar de manera local:
 Es necesario tener un entorno virtual activado, si aún no tienes uno iniciado dentro del directorio del proyecto ejecuta la siguiente comando:
 ```
-pyhton3 -m venv .venv
+python3 -m venv .venv
 ```
 
 Posteriormente activa el entorno virtual con el siguiente comando:
@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 Finalmente ejecutar:
 ```
-pyhton3 run.py
+python3 run.py
 ```
 
 ## Para crear las tablas de la base de datos:
