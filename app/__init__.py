@@ -10,9 +10,7 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
-    
-    from app import models    
-    
+    from app import models 
 
     # Register routes
     register_blueprints(app)

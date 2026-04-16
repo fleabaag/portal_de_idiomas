@@ -1,34 +1,31 @@
 from datetime import datetime
-from enum import Enum
 from flask_login import UserMixin
-
 from app.extensions import db
-
-
-class RolEnum(Enum):
-    usuario = "usuario"
-    administrador = "administrador"
-
+from .enums import RolUsuario
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Usuario(db.Model, UserMixin):
-    __tablename__ = "Usuario"
+    __tablename__ = "usuario"
 
     id_user = db.Column(db.Integer, primary_key=True)
-    nombre_usuario = db.Column(db.String(100), nullable=False, unique=True)
-    contrasena = db.Column(db.String(255), nullable=False)
-    
-    rol = db.Column(db.Enum(RolEnum), default=RolEnum.usuario, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
 
-    created_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
+    rol = db.Column(db.Enum(RolUsuario), nullable=False)
+    fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __repr__(self):
-        return f"<Usuario {self.nombre_usuario}>"
     
+    def set_password(self, raw_password):
+        self.password = generate_password_hash(raw_password)
+
+    
+    def check_password(self, raw_password):
+        return check_password_hash(self.password, raw_password)
+    # Herencia
+    __mapper_args__ = {
+        "polymorphic_on": rol,
+        "polymorphic_identity": "usuario"
+    }
+
     def get_id(self):
-        return str(self.id_user)
-
-    def is_admin(self):
-        return self.rol == RolEnum.administrador    
+        return str(self.id)
