@@ -16,29 +16,38 @@
     });
 </script> -->
 
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal de Idiomas</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/main.js"></script>
+</head>
+<body>
 
-{% block navbar %}
+    
 <div class="navbar">
     <h1>Portal de Idiomas</h1>
 </div>
-{% endblock %}
 
-{% block content %}
+
+    <div class="container">
+        
 <div style="max-width: 400px; margin: 5rem auto;">
     <div class="card">
         <h2>Login</h2>
         <p class="muted">Accede a tu cuenta</p>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
+        
+        
+        
         <div class="flash-alert alert ">
-            {{ message }}
+            E-mail o contraseña incorrectos
         </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
+        
+        
+        
         <form method="POST">
             <div class="form-group">
                 <label>E-mail</label>
@@ -52,7 +61,7 @@
                     <input placeholder="Ingresa tu contraseña" type="password" name="password" id="password" required>
         
                     <button type="button" id="togglePassword" class="toggle-password">
-                        <img id="eyeIcon" src="{{ url_for('static', filename='img/view.png') }}" alt="Show Password">
+                        <img id="eyeIcon" src="/static/img/view.png" alt="Show Password">
                     </button>
                 </div>
             </div>
@@ -61,4 +70,8 @@
         </form>
     </div>
 </div>
-{% endblock %}
+
+    </div>
+
+</body>
+</html>

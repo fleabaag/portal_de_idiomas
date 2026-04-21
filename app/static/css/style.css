@@ -6,6 +6,8 @@
     --card: #FFFFFF;
     --border: #E5E7EB;
     --text-secondary: #6B7280;
+    --png-eye-open: url("/static/img/view.png");
+    --png-eye-close: url("/static/img/cover.png");
 }
 
 * {
@@ -141,20 +143,28 @@ td {
 
 .input-wrapper input {
     width: 100%;
-    padding-right: 20px; /* espacio para el botón */
+    padding: 10px 40px 10px 12px; /* espacio a la derecha */
     box-sizing: border-box;
 }
 
 .toggle-password {
     position: absolute;
     top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    
+    right: 12px;
+    transform: translateY(-35%);
+
     background: none;
     border: none;
     cursor: pointer;
+
+    margin: 0;
+    width: 24px;         
+    height: 24px;    
     
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     font-size: 1rem;
     color: #666;
 }
@@ -166,4 +176,6 @@ td {
 .toggle-password img {
     width: 20px;
     height: 20px;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
 }
