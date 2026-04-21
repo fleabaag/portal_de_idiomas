@@ -5,9 +5,9 @@ Crear un sistema web que permita administrar cursos de idiomas, facilitando la g
 
 Colaboradores:
 - @fleabaag
-- @usuariozoe
-- @usuariojorge
-- @usuariotonatiuh
+- @tainzoe9
+- @Tonagg
+- @JorgeLazaro7
 
 ## Ejecutar de manera local:
 Es necesario tener un entorno virtual activado, si aún no tienes uno iniciado dentro del directorio del proyecto ejecuta la siguiente comando:
@@ -37,13 +37,13 @@ python3 run.py
 
 Primeramente es importante revisar que esté delcarada en `.flaskenv` la siguiente variable: 
 ```
-    FLASK_APP=run.py
+FLASK_APP=run.py
 ```
 Y que el `.env` tenga los datos correctos de la base de datos. 
 
 Una vez hecho esto, dentro del directorio principal ejecutar:
 ```
-    flask shell
+flask shell
 ```
 Y dentro de la shell ejecutar lo siguiente (sólo en desarrollo):
 
