@@ -11,5 +11,5 @@ from app.extensions import login_manager
 
 
 @login_manager.user_loader
-def load_user(user_id):
-    return Usuario.query.get(int(user_id))
+def load_user(id_user):
+    return Usuario.query.get(int(id_user))

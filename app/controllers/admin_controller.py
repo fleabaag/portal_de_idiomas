@@ -6,7 +6,7 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 @admin_bp.route("/dashboard")
 @login_required
 def dashboard():
-    # 🔒 PROTECT ADMIN ROUTE
+    # Protege la ruta del administrador
     if not current_user.is_admin():
         return redirect(url_for("user.dashboard"))
 

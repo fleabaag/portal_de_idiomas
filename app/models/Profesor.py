@@ -1,5 +1,7 @@
 from app.extensions import db
 from .Usuario import Usuario
+from .enums import RolUsuario
+
 
 class Profesor(Usuario):
     __tablename__ = "profesor"
@@ -11,5 +13,5 @@ class Profesor(Usuario):
     cursos = db.relationship("Curso", back_populates="profesor")
 
     __mapper_args__ = {
-        "polymorphic_identity": "profesor",
+        "polymorphic_identity": RolUsuario.PROFESOR,
     }

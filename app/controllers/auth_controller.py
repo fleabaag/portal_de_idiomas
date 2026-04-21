@@ -9,12 +9,12 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["nombre_usuario"]
-        password = request.form["contrasena"]
+        username = request.form["email"]
+        password = request.form["password"]
 
-        user = Usuario.query.filter_by(nombre_usuario=username).first()
-
-        if user and user.contrasena == password:
+        user = Usuario.query.filter_by(email=username).first()
+        
+        if user and user.check_contrasena(password):
             login_user(user)
 
             if user.is_admin():
@@ -22,8 +22,7 @@ def login():
             else:
                 return redirect(url_for("user.dashboard"))
         
-            
-    flash("Usuario o contraseña incorrectos", "error")
+        flash("E-mail o contraseña incorrectos", "error")
 
     return render_template("login.html")
 

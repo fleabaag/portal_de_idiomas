@@ -1,19 +1,19 @@
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    setTimeout(function () {
-        const alerts = document.querySelectorAll(".flash-alert");
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            const alerts = document.querySelectorAll(".flash-alert");
 
-        alerts.forEach(function(alert) {
-            alert.style.transition = "opacity 0.5s ease";
-            alert.style.opacity = "0";
+            alerts.forEach(function (alert) {
+                alert.style.transition = "opacity 0.5s ease";
+                alert.style.opacity = "0";
 
-            setTimeout(function () {
-                alert.remove();
-            }, 300);
-        });
+                setTimeout(function () {
+                    alert.remove();
+                }, 300);
+            });
 
-    }, 3000);
-});
+        }, 3000);
+    });
 </script>
 
 {% extends "base.html" %}
@@ -31,29 +31,35 @@ document.addEventListener("DOMContentLoaded", function () {
         <p class="muted">Accede a tu cuenta</p>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-alert alert ">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-alert alert ">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
         <form method="POST">
             <div class="form-group">
-                <label>Nombre de usuario</label>
-                <input type="text" name="nombre_usuario" required>
+                <label>E-mail</label>
+                <input type="email" name="email" required>
             </div>
 
             <div class="form-group">
                 <label>Contraseña</label>
-                <input type="password" name="contrasena" required>
+
+                <div class="input-wrapper">
+                    <input type="password" name="password" id="password" required>
+                    <button type="button" id="togglePassword" class="toggle-password">
+                        <img id="eyeIcon" src="{{ url_for('static', filename='img/view.png') }}" alt="Show Password">
+                    </button>
+                </div>
             </div>
+
+            
 
             <button type="submit">Iniciar sesión</button>
         </form>
     </div>
 </div>
 {% endblock %}
-
-

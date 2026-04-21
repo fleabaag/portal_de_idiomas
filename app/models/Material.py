@@ -9,4 +9,4 @@ class Material(db.Model):
     url_archivo = db.Column(db.String(255))
 
     curso_id = db.Column(db.Integer, db.ForeignKey("curso.id_curso"))
-    curso = db.relationship("Curso", back_populates="material")
+    curso = db.relationship("Curso", back_populates="materiales")

@@ -10,7 +10,7 @@ class Curso(db.Model):
     estado = db.Column(db.Enum(EstadoCurso), nullable=False)
 
     profesor_id = db.Column(db.Integer, db.ForeignKey("profesor.id_profesor"))
-    profesor = db.relationship("Profesor", back_populates="curso")
+    profesor = db.relationship("Profesor", back_populates="cursos")
 
     materiales = db.relationship("Material", back_populates="curso")
     inscripciones = db.relationship("Inscripcion", back_populates="curso")

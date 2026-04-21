@@ -15,5 +15,5 @@ class Inscripcion(db.Model):
     periodo = db.Column(db.Enum(PeriodoEnum), nullable=False)
     anio = db.Column(db.Integer, nullable=False)
 
-    alumno = db.relationship("Alumno", back_populates="inscripcion")
-    curso = db.relationship("Curso", back_populates="inscripcion")
+    alumno = db.relationship("Alumno", back_populates="inscripciones")
+    curso = db.relationship("Curso", back_populates="inscripciones")

@@ -133,3 +133,37 @@ td {
     opacity: 1;
     transition: opacity 0.5s ease;
 }
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding-right: 20px; /* espacio para el botón */
+    box-sizing: border-box;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    
+    background: none;
+    border: none;
+    cursor: pointer;
+    
+    font-size: 1rem;
+    color: #666;
+}
+
+.toggle-password:hover {
+    color: #000;
+}
+
+.toggle-password img {
+    width: 20px;
+    height: 20px;
+}

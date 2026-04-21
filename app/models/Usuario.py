@@ -29,11 +29,29 @@ class Usuario(db.Model, UserMixin):
     # Herencia
     __mapper_args__ = {
         "polymorphic_on": rol,
-        "polymorphic_identity": "usuario"
+        "polymorphic_identity": RolUsuario.ADMIN
     }
+    
+    def set_contrasena(self, raw_password):
+        self.password = generate_password_hash(raw_password)
+
+    def check_contrasena(self, raw_password):
+        return check_password_hash(self.password, raw_password)
 
     def get_id(self):
-        return str(self.id)
+        return str(self.id_user)
+    
+    def is_admin(self):
+        return True if self.rol == RolUsuario.ADMIN else False
+    
+    def is_profesor(self):
+        return True if self.rol == RolUsuario.PROFESOR else False
+    
+    def is_alumno(self):
+        return True if self.rol == RolUsuario.ALUMNO else False  
+    
+    def rol_display(self):
+        return self.rol.value.capitalize()        
 
     def nombre_completo(self):
         if self.segundo_apellido:
