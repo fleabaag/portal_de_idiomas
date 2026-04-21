@@ -12,7 +12,7 @@ Colaboradores:
 ## Ejecutar de manera local:
 Es necesario tener un entorno virtual activado, si aún no tienes uno iniciado dentro del directorio del proyecto ejecuta la siguiente comando:
 ```
-pyhton3 -m venv .venv
+python3 -m venv .venv
 ```
 
 Posteriormente activa el entorno virtual con el siguiente comando:
@@ -30,5 +30,29 @@ pip install -r requirements.txt
 
 Finalmente ejecutar:
 ```
-pyhton3 run.py
+python3 run.py
+```
+
+## Para crear las tablas de la base de datos:
+
+Primeramente es importante revisar que esté delcarada en `.flaskenv` la siguiente variable: 
+```
+    FLASK_APP=run.py
+```
+Y que el `.env` tenga los datos correctos de la base de datos. 
+
+Una vez hecho esto, dentro del directorio principal ejecutar:
+```
+    flask shell
+```
+Y dentro de la shell ejecutar lo siguiente (sólo en desarrollo):
+
+```python
+from app import create_app
+from app.extensions import db
+app = create_app()
+app.app_context().push()
+db.drop_all()
+db.create_all()
+
 ```

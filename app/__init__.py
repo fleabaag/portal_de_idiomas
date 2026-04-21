@@ -1,6 +1,6 @@
 from flask import Flask
 from .config import Config
-from .extensions import db
+from .extensions import db, login_manager
 from .controllers import register_blueprints
 
 def create_app():
@@ -9,6 +9,8 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
+    login_manager.init_app(app)
+    from app import models 
 
     # Register routes
     register_blueprints(app)
