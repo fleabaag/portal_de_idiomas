@@ -1,5 +1,6 @@
 from datetime import datetime
 from app.extensions import db
+from .enums import PeriodoEnum
 
 class Inscripcion(db.Model):
     __tablename__ = "inscripcion"
@@ -9,6 +10,10 @@ class Inscripcion(db.Model):
 
     alumno_id = db.Column(db.Integer, db.ForeignKey("alumno.id_alumno"))
     curso_id = db.Column(db.Integer, db.ForeignKey("curso.id_curso"))
+    
+    calificacion = db.Column(db.Float, nullable=True)
+    periodo = db.Column(db.Enum(PeriodoEnum), nullable=False)
+    anio = db.Column(db.Integer, nullable=False)
 
     alumno = db.relationship("Alumno", back_populates="inscripcion")
     curso = db.relationship("Curso", back_populates="inscripcion")

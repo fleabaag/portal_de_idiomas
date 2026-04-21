@@ -10,3 +10,7 @@ class EstadoCurso(Enum):
     BORRADOR = "borrador"
     PUBLICADO = "publicado"
     CERRADO = "cerrado"
+    
+class PeriodoEnum(Enum):
+    PRIMAVERA = "Primavera"
+    OTONO = "Otoño"    

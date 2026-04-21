@@ -45,16 +45,14 @@ Una vez hecho esto, dentro del directorio principal ejecutar:
 ```
     flask shell
 ```
-Y dentro de la shell ejecutar lo siguiente:
+Y dentro de la shell ejecutar lo siguiente (sólo en desarrollo):
 
 ```python
-    from app import create_app
-    from app.extensions import db
-
-    app = create_app()
-    app.app_context().push()
-
-    db.drop_all()   # sólo en desarrollo!!!
-    db.create_all()
+from app import create_app
+from app.extensions import db
+app = create_app()
+app.app_context().push()
+db.drop_all()
+db.create_all()
 
 ```

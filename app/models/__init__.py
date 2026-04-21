@@ -5,6 +5,7 @@ from .Curso import Curso
 from .Material import Material
 from .Inscripcion import Inscripcion
 from .enums import RolUsuario, EstadoCurso
+from .Horario import Horario
 
 from app.extensions import login_manager
 

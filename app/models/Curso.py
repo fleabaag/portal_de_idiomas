@@ -14,3 +14,4 @@ class Curso(db.Model):
 
     materiales = db.relationship("Material", back_populates="curso")
     inscripciones = db.relationship("Inscripcion", back_populates="curso")
+    horario = db.relationship("Horario", back_populates="curso", cascade="all, delete")    
