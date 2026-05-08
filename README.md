@@ -35,7 +35,7 @@ python3 run.py
 
 ## Para crear las tablas de la base de datos:
 
-Para eliminar y crear de nuevo todos los registros y poblar la base de datos con 3 usuarios simples: alumno, administrador y profesor basta con ejecutar:
+Para eliminar y crear de nuevo todos los registros y poblar la base de datos con 3 usuarios simples alumno, administrador y profesor basta con ejecutar:
 
 ```
 python3 seed.py
