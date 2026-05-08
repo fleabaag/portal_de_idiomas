@@ -6,6 +6,8 @@ from .Material import Material
 from .Inscripcion import Inscripcion
 from .enums import RolUsuario, EstadoCurso
 from .Horario import Horario
+from .Idioma import Idioma
+from .profesor_idioma import ProfesorIdioma
 
 from app.extensions import login_manager
 

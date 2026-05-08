@@ -6,12 +6,38 @@ from .enums import RolUsuario
 class Profesor(Usuario):
     __tablename__ = "profesor"
 
-    id_profesor = db.Column(db.Integer, db.ForeignKey("usuario.id_user"), primary_key=True)
-    especialidad = db.Column(db.String(100))
-    sueldo = db.Column(db.Float)
+    # =========================
+    # Atributos
+    # =========================
+    
+    id_profesor = db.Column(
+        db.Integer, db.ForeignKey("usuario.id_user"), primary_key=True, nullable=False
+    )  # PK
 
-    cursos = db.relationship("Curso", back_populates="profesor")
+    sueldo = db.Column(db.Float, nullable=True)  # Debe ser mayor a 0
 
+    # =========================
+    # Relaciones
+    # =========================
+    
+    cursos = db.relationship(
+        "Curso", back_populates="profesor"
+    )  # Relacion Profesor 1:M Curso
+
+    profesor_idioma = db.relationship(
+        "ProfesorIdioma", back_populates="profesor"
+    )  # Relación N:M Profesor - profesor_idioma - Idioma
+
+    # =========================
+    # Herencia
+    # =========================
+    
     __mapper_args__ = {
         "polymorphic_identity": RolUsuario.PROFESOR,
     }
+
+    # =========================
+    # Constraints
+    # =========================
+    
+    __table_args__ = (db.CheckConstraint("sueldo > 0", name="check_sueldo_range"),)

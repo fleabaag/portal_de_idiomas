@@ -4,55 +4,75 @@ from app.extensions import db
 from .enums import RolUsuario
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 class Usuario(db.Model, UserMixin):
     __tablename__ = "usuario"
 
-    id_user = db.Column(db.Integer, primary_key=True)
-    
+    # =========================
+    # Atributos
+    # =========================
+
+    id_user = db.Column(db.Integer, primary_key=True, nullable=False)
+
     email = db.Column(db.String(120), unique=True, nullable=False)
+
     password = db.Column(db.String(255), nullable=False)
-    
+
     nombre = db.Column(db.String(100), nullable=False)
+
     primer_apellido = db.Column(db.String(100), nullable=False)
+
     segundo_apellido = db.Column(db.String(100), nullable=True)
 
     rol = db.Column(db.Enum(RolUsuario), nullable=False)
-    fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
 
-    
-    def set_password(self, raw_password):
-        self.password = generate_password_hash(raw_password)
+    fecha_registro = db.Column(db.DateTime, default=datetime)
 
-    
-    def check_password(self, raw_password):
-        return check_password_hash(self.password, raw_password)
+    # =========================
     # Herencia
-    __mapper_args__ = {
-        "polymorphic_on": rol,
-        "polymorphic_identity": RolUsuario.ADMIN
-    }
-    
+    # =========================
+
+    __mapper_args__ = {"polymorphic_on": rol, "polymorphic_identity": RolUsuario.ADMIN}
+
+    # =========================
+    # Contraseña
+    # =========================
+
     def set_contrasena(self, raw_password):
         self.password = generate_password_hash(raw_password)
 
     def check_contrasena(self, raw_password):
         return check_password_hash(self.password, raw_password)
 
+    # =========================
+    # Flask-Login
+    # =========================
+
     def get_id(self):
         return str(self.id_user)
-    
-    def is_admin(self):
-        return True if self.rol == RolUsuario.ADMIN else False
-    
-    def is_profesor(self):
-        return True if self.rol == RolUsuario.PROFESOR else False
-    
-    def is_alumno(self):
-        return True if self.rol == RolUsuario.ALUMNO else False  
-    
-    def rol_display(self):
-        return self.rol.value.capitalize()        
 
+    # =========================
+    # Roles
+    # =========================
+
+    def is_admin(self):
+        return self.rol == RolUsuario.ADMIN
+
+    def is_profesor(self):
+        return self.rol == RolUsuario.PROFESOR
+
+    def is_alumno(self):
+        return self.rol == RolUsuario.ALUMNO
+
+    # =========================
+    # Propiedades
+    # =========================
+
+    @property
+    def rol_display(self):
+        return self.rol.value.capitalize()
+
+    @property
     def nombre_completo(self):
         if self.segundo_apellido:
             return f"{self.nombre} {self.primer_apellido} {self.segundo_apellido}"

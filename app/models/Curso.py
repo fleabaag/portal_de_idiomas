@@ -1,17 +1,45 @@
 from app.extensions import db
-from .enums import EstadoCurso
+from .enums import EstadoCurso, Niveles
+
 
 class Curso(db.Model):
     __tablename__ = "curso"
 
-    id_curso = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(100), nullable=False)
+    # =========================
+    # Atributos
+    # =========================
+
+    id_curso = db.Column(db.Integer, primary_key=True, nullable=False)  # PK
+
+    id_profesor = db.Column(
+        db.Integer, db.ForeignKey("profesor.id_profesor"), nullable=False
+    )  # FK
+
+    id_idioma = db.Column(
+        db.Integer, db.ForeignKey("idioma.id_idioma"), nullable=False
+    )  # FK
+
+    nivel = db.Column(db.Enum(Niveles), nullable=False)
 
     estado = db.Column(db.Enum(EstadoCurso), nullable=False)
 
-    profesor_id = db.Column(db.Integer, db.ForeignKey("profesor.id_profesor"))
+    descripcion = db.Column(db.Text, nullable=True)
+
+    # =========================
+    # Relaciones
+    # =========================
+
+    # Relacion Profesor 1:M Curso
     profesor = db.relationship("Profesor", back_populates="cursos")
 
+    # Relación Curso 1:M Material
     materiales = db.relationship("Material", back_populates="curso")
+
+    # Relación Curso 1:M Horario
+    horario = db.relationship("Horario", back_populates="curso", cascade="all, delete")
+
+    # Relación N:M Curso - Inscripción - Alumnos
     inscripciones = db.relationship("Inscripcion", back_populates="curso")
-    horario = db.relationship("Horario", back_populates="curso", cascade="all, delete")    
+
+    # Relación Idioma 1:M Cursos
+    idioma = db.relationship("Idioma", back_populates="cursos")

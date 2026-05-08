@@ -7,11 +7,29 @@ from .enums import RolUsuario
 class Alumno(Usuario):
     __tablename__ = "alumno"
 
-    id_alumno = db.Column(db.Integer, db.ForeignKey("usuario.id_user"), primary_key=True)
-    nivel_actual = db.Column(db.String(50))
-    fecha_ingreso = db.Column(db.DateTime, default=datetime.utcnow)
+    # =========================
+    # Atributos
+    # =========================
 
-    inscripciones = db.relationship("Inscripcion", back_populates="alumno")
+    id_alumno = db.Column(
+        db.Integer, db.ForeignKey("usuario.id_user"), primary_key=True, nullable=False
+    )  # PK
+
+    fecha_ingreso = db.Column(
+        db.DateTime, default=datetime, nullable=True
+    )  # Fecha en la que se inscribió por primera vez a un curso
+
+    # =========================
+    # Relaciones
+    # =========================
+
+    inscripciones = db.relationship(
+        "Inscripcion", back_populates="alumno"
+    )  # Relación N:M Curso - Inscripción - Alumnos
+
+    # =========================
+    # Herencia
+    # =========================
 
     __mapper_args__ = {
         "polymorphic_identity": RolUsuario.ALUMNO,
