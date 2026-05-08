@@ -35,24 +35,8 @@ python3 run.py
 
 ## Para crear las tablas de la base de datos:
 
-Primeramente es importante revisar que esté delcarada en `.flaskenv` la siguiente variable: 
-```
-FLASK_APP=run.py
-```
-Y que el `.env` tenga los datos correctos de la base de datos. 
+Para eliminar y crear de nuevo todos los registros y poblar la base de datos con 3 usuarios simples: alumno, administrador y profesor basta con ejecutar:
 
-Una vez hecho esto, dentro del directorio principal ejecutar:
 ```
-flask shell
-```
-Y dentro de la shell ejecutar lo siguiente (sólo en desarrollo):
-
-```python
-from app import create_app
-from app.extensions import db
-app = create_app()
-app.app_context().push()
-db.drop_all()
-db.create_all()
-
+python3 seed.py
 ```
