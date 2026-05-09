@@ -10,9 +10,9 @@ class Idioma(db.Model):
     
     id_idioma = db.Column(db.Integer, primary_key=True, nullable=False)  # PK
 
-    nombre = db.Column(db.String(100), unique=True, nullable=False)  # Nombre del Idioma
+    nombre_idioma = db.Column(db.String(100), unique=True, nullable=False)  # Nombre del Idioma
 
-    descripcion = db.Column(db.Text, nullable=True)
+    descripcion_idioma = db.Column(db.Text, nullable=True)
 
     # =========================
     # Relaciones

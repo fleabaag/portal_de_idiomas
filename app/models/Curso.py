@@ -23,7 +23,7 @@ class Curso(db.Model):
 
     estado = db.Column(db.Enum(EstadoCurso), nullable=False)
 
-    descripcion = db.Column(db.Text, nullable=True)
+    descripcion_curso = db.Column(db.Text, nullable=True)
     
     periodo = db.Column(db.Enum(PeriodoEnum), nullable=False)
 
