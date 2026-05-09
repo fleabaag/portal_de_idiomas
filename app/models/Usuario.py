@@ -26,7 +26,7 @@ class Usuario(db.Model, UserMixin):
 
     rol = db.Column(db.Enum(RolUsuario), nullable=False)
 
-    fecha_registro = db.Column(db.DateTime, default=datetime)
+    fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
 
     # =========================
     # Herencia

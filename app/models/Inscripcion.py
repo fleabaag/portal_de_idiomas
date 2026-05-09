@@ -1,6 +1,5 @@
 from datetime import datetime
 from app.extensions import db
-from .enums import PeriodoEnum
 
 
 class Inscripcion(db.Model):
