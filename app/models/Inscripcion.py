@@ -21,10 +21,6 @@ class Inscripcion(db.Model):
 
     calificacion = db.Column(db.Float, nullable=True)  # Debe ser entre 0.0 y 10.0
 
-    periodo = db.Column(db.Enum(PeriodoEnum), nullable=False)
-
-    anio = db.Column(db.Integer, nullable=False)  # Debe ser mayor a 2000 y menor a 2100
-
     # =========================
     # Relaciones
     # =========================
@@ -46,5 +42,4 @@ class Inscripcion(db.Model):
             "calificacion IS NULL OR (calificacion >= 0.0 AND calificacion <= 10.0)",
             name="check_calificacion_range",
         ),
-        db.CheckConstraint("anio >= 2000 AND anio <= 2100", name="check_anio_range"),
     )

@@ -1,5 +1,5 @@
 from app.extensions import db
-from .enums import EstadoCurso, Niveles
+from .enums import EstadoCurso, Niveles, PeriodoEnum
 
 
 class Curso(db.Model):
@@ -24,6 +24,10 @@ class Curso(db.Model):
     estado = db.Column(db.Enum(EstadoCurso), nullable=False)
 
     descripcion = db.Column(db.Text, nullable=True)
+    
+    periodo = db.Column(db.Enum(PeriodoEnum), nullable=False)
+
+    anio = db.Column(db.Integer, nullable=False)  # Debe ser mayor a 2000 y menor a 2100    
 
     # =========================
     # Relaciones
@@ -43,3 +47,12 @@ class Curso(db.Model):
 
     # Relación Idioma 1:M Cursos
     idioma = db.relationship("Idioma", back_populates="cursos")
+    
+    # =========================
+    # Constraints
+    # =========================
+    
+    __table_args__ = (
+        db.CheckConstraint("anio >= 2000 AND anio <= 2100", name="check_anio_range"),
+    )
+    
