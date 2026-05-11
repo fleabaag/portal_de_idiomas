@@ -19,6 +19,8 @@ def login():
 
             if user.is_admin():
                 return redirect(url_for("admin.dashboard"))
+            if user.is_profesor():
+                return redirect(url_for("user.dashboard"))
             else:
                 return redirect(url_for("user.dashboard"))
         
