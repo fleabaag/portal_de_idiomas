@@ -2,31 +2,67 @@
 
 {% block navbar %}
 <div class="navbar">
-    <h1>Panel del Administrator</h1>
+    <h1>Panel del Administrador</h1>
     <div>
-        <a href="#">Usuarios</a>
-        <a href="#">Cursos</a>
-        <a href="/">Cerrar sesión</a>
+        <a href="{{ url_for('admin.dashboard') }}">Idiomas</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
     </div>
 </div>
 {% endblock %}
 
 {% block content %}
-<div class="card">
-    <h2>Administrar usuarios</h2>
-    <p class="muted">Vista general del administrador</p>
+<div class="dashboard-grid">
+    <div class="card">
+        <h2>Agregar idioma</h2>
+        <p class="muted">Estos idiomas aparecerán en el formulario de creación de cursos del profesor.</p>
 
-    <table>
-        <tr>
-            <th>Usuario</th>
-            <th>Email</th>
-            <th>Rol</th>
-        </tr>
-        <tr>
-            <td>{{ current_user.nombre_completo }}</td>
-            <th>{{ current_user.email }}</th>
-            <th>{{ current_user.rol_display }}</th>
-        </tr>
-    </table>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-alert alert {{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="nombre_idioma">Nombre del idioma</label>
+                <input type="text" name="nombre_idioma" id="nombre_idioma" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion_idioma">Descripción</label>
+                <input type="text" name="descripcion_idioma" id="descripcion_idioma" placeholder="Opcional">
+            </div>
+
+            <button type="submit">Guardar idioma</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Idiomas registrados</h2>
+        <p class="muted">Lista de idiomas disponibles para crear cursos.</p>
+
+        {% if idiomas %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Idioma</th>
+                <th>Descripción</th>
+            </tr>
+            {% for idioma in idiomas %}
+            <tr>
+                <td>{{ idioma.id_idioma }}</td>
+                <td>{{ idioma.nombre_idioma }}</td>
+                <td>{{ idioma.descripcion_idioma or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p class="muted">No hay idiomas cargados todavía.</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

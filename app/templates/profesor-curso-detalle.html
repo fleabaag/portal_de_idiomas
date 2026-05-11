@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+<div class="navbar">
+    <h1>Detalle de Curso</h1>
+    <div>
+        <a href="{{ url_for('user.dashboard') }}">Volver a mis cursos</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>{{ curso.idioma.nombre_idioma }} - {{ curso.nivel.value }}</h2>
+    <p class="muted">Información general del curso.</p>
+
+    <table>
+        <tr>
+            <th>Campo</th>
+            <th>Valor</th>
+        </tr>
+        <tr>
+            <td>ID</td>
+            <td>{{ curso.id_curso }}</td>
+        </tr>
+        <tr>
+            <td>Idioma</td>
+            <td>{{ curso.idioma.nombre_idioma }}</td>
+        </tr>
+        <tr>
+            <td>Nivel</td>
+            <td>{{ curso.nivel.value }}</td>
+        </tr>
+        <tr>
+            <td>Periodo</td>
+            <td>{{ curso.periodo.value }} {{ curso.anio }}</td>
+        </tr>
+        <tr>
+            <td>Estado</td>
+            <td>{{ curso.estado.value }}</td>
+        </tr>
+        <tr>
+            <td>Descripción</td>
+            <td>{{ curso.descripcion_curso or 'Sin descripción' }}</td>
+        </tr>
+        <tr>
+            <td>Horarios registrados</td>
+            <td>{{ curso.horario|length }}</td>
+        </tr>
+        <tr>
+            <td>Materiales registrados</td>
+            <td>{{ curso.materiales|length }}</td>
+        </tr>
+    </table>
+
+    {% if curso.estado.name == 'BORRADOR' %}
+    <form method="POST" action="{{ url_for('user.publicar_curso', id_curso=curso.id_curso) }}" class="inline-form mt-16">
+        <button type="submit" class="button-small">Publicar curso</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

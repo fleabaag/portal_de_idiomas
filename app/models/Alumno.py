@@ -16,7 +16,7 @@ class Alumno(Usuario):
     )  # PK
 
     fecha_ingreso = db.Column(
-        db.DateTime, default=datetime, nullable=True
+        db.DateTime, default=datetime.utcnow, nullable=True
     )  # Fecha en la que se inscribió por primera vez a un curso
 
     # =========================

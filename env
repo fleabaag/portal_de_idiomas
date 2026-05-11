@@ -1,0 +1,3 @@
+
+SECRET_KEY=supersecretkey
+DATABASE_URL=mysql+pymysql://user:password@localhost/language_school
