@@ -4,6 +4,8 @@ from urllib.parse import quote_plus
 
 load_dotenv()
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
     user = os.getenv("DB_USER")
@@ -13,3 +15,5 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{user}:{password}@{host}/{db}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, "instance", "uploads")
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
