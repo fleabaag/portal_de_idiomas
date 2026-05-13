@@ -7,7 +7,8 @@ from werkzeug.utils import secure_filename
 from app.extensions import db
 from app.models import Curso, EstadoCurso, Idioma, Material, Niveles, PeriodoEnum
 
-user_bp = Blueprint("user", __name__, url_prefix="/user")
+profesor_bp = Blueprint("profesor", __name__, url_prefix="/profesor")
+
 
 ALLOWED_MATERIAL_EXTENSIONS = {
     "pdf",
@@ -21,15 +22,37 @@ ALLOWED_MATERIAL_EXTENSIONS = {
     "xls",
     "xlsx",
     "csv",
+    "png",
+    "jpg",
+    "jpeg",
 }
 
 
 def allowed_material_file(filename):
+    """Verifica si el archivo tiene una extensión permitida.
+
+    Args:
+        filename (str): El nombre del archivo a verificar.
+
+    Returns:
+        bool: True si el archivo tiene una extensión válida, False en caso contrario.
+    """
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_MATERIAL_EXTENSIONS
 
-@user_bp.route("/dashboard", methods=["GET", "POST"])
+@profesor_bp.route("/dashboard", methods=["GET", "POST"])
 @login_required
 def dashboard():
+    """Muestra el panel de control del profesor y permite crear nuevos cursos.
+
+    Raises:
+        ValueError: Si el año está fuera del rango permitido (2000-2100).
+        ValueError: Si el idioma seleccionado no existe.
+        ValueError: Si el nivel seleccionado no es válido.
+        ValueError: Si el periodo seleccionado no es válido.
+
+    Returns:
+        str: Renderiza la plantilla del panel de control del profesor o redirige en caso de error.
+    """
     if current_user.is_profesor():
         idiomas = Idioma.query.order_by(Idioma.nombre_idioma).all()
         cursos = (
@@ -72,7 +95,7 @@ def dashboard():
                 db.session.add(nuevo_curso)
                 db.session.commit()
                 flash("Curso creado correctamente.", "success")
-                return redirect(url_for("user.dashboard"))
+                return redirect(url_for("profesor.dashboard"))
             except ValueError as error:
                 flash(str(error), "error")
             except Exception:
@@ -80,22 +103,30 @@ def dashboard():
                 flash("No se pudo crear el curso. Intenta de nuevo.", "error")
 
         return render_template(
-            "profesor-dashboard.html",
+            "profesor/profesor-dashboard.html",
             idiomas=idiomas,
             cursos=cursos,
             niveles=Niveles,
             periodos=PeriodoEnum,
         )
 
-    return render_template("dashboard.html")
+    return render_template("auth/login.html")
 
 
-@user_bp.route("/cursos/<int:id_curso>")
+@profesor_bp.route("/cursos/<int:id_curso>")
 @login_required
 def curso_detalle(id_curso):
+    """Muestra los detalles de un curso específico.
+
+    Args:
+        id_curso (int): El ID del curso a mostrar.
+
+    Returns:
+        str: Renderiza la plantilla con los detalles del curso o redirige en caso de error.
+    """
     if not current_user.is_profesor():
         flash("Solo los profesores pueden acceder a esta sección.", "error")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("profesor.dashboard"))
 
     curso = Curso.query.filter_by(
         id_curso=id_curso,
@@ -104,17 +135,25 @@ def curso_detalle(id_curso):
 
     if not curso:
         flash("No tienes acceso a ese curso.", "error")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("profesor.dashboard"))
 
-    return render_template("profesor-curso-detalle.html", curso=curso)
+    return render_template("profesor/profesor-curso-detalle.html", curso=curso)
 
 
-@user_bp.route("/cursos/<int:id_curso>/materiales", methods=["POST"])
+@profesor_bp.route("/cursos/<int:id_curso>/materiales", methods=["POST"])
 @login_required
 def subir_material(id_curso):
+    """Permite a un profesor subir materiales a un curso publicado.
+
+    Args:
+        id_curso (int): El ID del curso al que se subirá el material.
+
+    Returns:
+        str: Redirige a la página de detalles del curso o muestra mensajes de error.
+    """
     if not current_user.is_profesor():
         flash("Solo los profesores pueden subir materiales.", "error")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("profesor.dashboard"))
 
     curso = Curso.query.filter_by(
         id_curso=id_curso,
@@ -123,26 +162,26 @@ def subir_material(id_curso):
 
     if not curso:
         flash("No tienes acceso a ese curso.", "error")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("profesor.dashboard"))
 
     if curso.estado != EstadoCurso.PUBLICADO:
         flash("Solo puedes subir materiales a un curso publicado.", "error")
-        return redirect(url_for("user.curso_detalle", id_curso=id_curso))
+        return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
     titulo = request.form.get("titulo_material", "").strip()
     archivo = request.files.get("archivo_material")
 
     if not titulo:
         flash("El título del material es obligatorio.", "error")
-        return redirect(url_for("user.curso_detalle", id_curso=id_curso))
+        return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
     if not archivo or archivo.filename == "":
         flash("Debes seleccionar un archivo.", "error")
-        return redirect(url_for("user.curso_detalle", id_curso=id_curso))
+        return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
     if not allowed_material_file(archivo.filename):
         flash("Formato no permitido. Usa PDF, Word, Excel, PowerPoint, texto u otros documentos comunes.", "error")
-        return redirect(url_for("user.curso_detalle", id_curso=id_curso))
+        return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
     original_filename = secure_filename(archivo.filename)
     extension = original_filename.rsplit(".", 1)[1].lower()
@@ -158,27 +197,43 @@ def subir_material(id_curso):
         id_curso=curso.id_curso,
         titulo=titulo,
         tipo_archivo=extension,
-        url_archivo=url_for("user.descargar_material", filename=stored_filename),
+        url_archivo=url_for("profesor.descargar_material", filename=stored_filename),
     )
 
     db.session.add(material)
     db.session.commit()
     flash("Material subido correctamente.", "success")
-    return redirect(url_for("user.curso_detalle", id_curso=id_curso))
+    return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
 
-@user_bp.route("/materiales/<path:filename>")
+@profesor_bp.route("/materiales/<path:filename>")
 @login_required
 def descargar_material(filename):
+    """Peemitee descargar un archivo de material subido.
+
+    Args:
+        filename (str): El nombre del archivo a descargar.
+
+    Returns:
+        Response: Descarga el archivo desde el directorio de subida.
+    """
     return send_from_directory(current_app.config["UPLOAD_FOLDER"], filename, as_attachment=True)
 
 
-@user_bp.route("/cursos/<int:id_curso>/publicar", methods=["POST"])
+@profesor_bp.route("/cursos/<int:id_curso>/publicar", methods=["POST"])
 @login_required
 def publicar_curso(id_curso):
+    """Permite a un profesor publicar un curso.
+
+    Args:
+        id_curso (int): El ID del curso a publicar.
+
+    Returns:
+        str: Redirige al panel de control del profesor con un mensaje de éxito o error.
+    """
     if not current_user.is_profesor():
         flash("Solo los profesores pueden publicar cursos.", "error")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("profesor.dashboard"))
 
     curso = Curso.query.filter_by(
         id_curso=id_curso,
@@ -187,17 +242,17 @@ def publicar_curso(id_curso):
 
     if not curso:
         flash("No tienes acceso a ese curso.", "error")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("profesor.dashboard"))
 
     if curso.estado == EstadoCurso.PUBLICADO:
         flash("Ese curso ya está publicado.", "success")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("profesor.dashboard"))
 
     if curso.estado == EstadoCurso.CERRADO:
         flash("No puedes publicar un curso cerrado.", "error")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("profesor.dashboard"))
 
     curso.estado = EstadoCurso.PUBLICADO
     db.session.commit()
     flash("Curso publicado correctamente.", "success")
-    return redirect(url_for("user.dashboard"))
+    return redirect(url_for("profesor.dashboard"))

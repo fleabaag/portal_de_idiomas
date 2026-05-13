@@ -4,7 +4,7 @@
 <div class="navbar">
     <h1>Panel de Profesor</h1>
     <div>
-        <a href="{{ url_for('user.dashboard') }}">Mis cursos</a>
+        <a href="{{ url_for('profesor.dashboard') }}">Mis cursos</a>
         <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
     </div>
 </div>
@@ -104,9 +104,9 @@
                 <td>{{ curso.anio }}</td>
                 <td>{{ curso.estado.value }}</td>
                 <td class="actions-cell">
-                    <a href="{{ url_for('user.curso_detalle', id_curso=curso.id_curso) }}" class="button-link">Acceder</a>
+                    <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}" class="button-link">Acceder</a>
                     {% if curso.estado.name == 'BORRADOR' %}
-                    <form method="POST" action="{{ url_for('user.publicar_curso', id_curso=curso.id_curso) }}" class="inline-form">
+                    <form method="POST" action="{{ url_for('profesor.publicar_curso', id_curso=curso.id_curso) }}" class="inline-form">
                         <button type="submit" class="button-small">Publicar</button>
                     </form>
                     {% endif %}

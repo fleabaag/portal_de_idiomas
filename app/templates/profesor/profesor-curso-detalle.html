@@ -4,7 +4,7 @@
 <div class="navbar">
     <h1>Detalle de Curso</h1>
     <div>
-        <a href="{{ url_for('user.dashboard') }}">Volver a mis cursos</a>
+        <a href="{{ url_for('profesor.dashboard') }}">Volver a mis cursos</a>
         <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
     </div>
 </div>
@@ -65,7 +65,7 @@
     </table>
 
     {% if curso.estado.name == 'BORRADOR' %}
-    <form method="POST" action="{{ url_for('user.publicar_curso', id_curso=curso.id_curso) }}" class="inline-form mt-16">
+    <form method="POST" action="{{ url_for('profesor.publicar_curso', id_curso=curso.id_curso) }}" class="inline-form mt-16">
         <button type="submit" class="button-small">Publicar curso</button>
     </form>
     <p class="muted mt-16">Solo puedes subir materiales cuando el curso está publicado.</p>
@@ -74,7 +74,7 @@
         <h3>Subir material</h3>
         <p class="muted">Archivos permitidos: PDF, Word, Excel, PowerPoint, texto y formatos comunes de documento.</p>
 
-        <form method="POST" action="{{ url_for('user.subir_material', id_curso=curso.id_curso) }}" enctype="multipart/form-data" class="material-form">
+        <form method="POST" action="{{ url_for('profesor.subir_material', id_curso=curso.id_curso) }}" enctype="multipart/form-data" class="material-form">
             <div class="form-row">
                 <div class="form-group">
                     <label for="titulo_material">Título</label>
