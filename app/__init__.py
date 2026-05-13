@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from .config import Config
 from .extensions import db, login_manager
@@ -11,6 +13,8 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     from app import models 
+
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
     # Register routes
     register_blueprints(app)

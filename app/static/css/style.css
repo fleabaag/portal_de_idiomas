@@ -141,6 +141,20 @@ textarea:focus {
     margin-top: 1rem;
 }
 
+.material-upload-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.material-form {
+    margin-top: 1rem;
+}
+
+.material-form input[type="file"] {
+    padding: 0.5rem 0.65rem;
+}
+
 .alert.success {
     background-color: #DCFCE7;
     color: #166534;

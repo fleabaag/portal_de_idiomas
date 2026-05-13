@@ -27,8 +27,8 @@ with app.app_context():
     alumno = Alumno(
         email="alumno@test.com",
         nombre="ALUMNO",
-        primer_apellido="Pérez",
-        segundo_apellido="Maverick",
+        primer_apellido="Prueba",
+        segundo_apellido="Prueba 2",
     )
     alumno.set_contrasena("ALUMNO")
 
