@@ -110,7 +110,7 @@ def dashboard():
             periodos=PeriodoEnum,
         )
 
-    return render_template("auth/login.html")
+    return redirect(url_for("auth.login"))
 
 
 @profesor_bp.route("/cursos/<int:id_curso>")
