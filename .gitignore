@@ -3,4 +3,4 @@
 .flaskenv
 instance/
 __pycache__/
-*.py[cod]
+*.py[cod]venv/

@@ -256,3 +256,48 @@ def publicar_curso(id_curso):
     db.session.commit()
     flash("Curso publicado correctamente.", "success")
     return redirect(url_for("profesor.dashboard"))
+
+@profesor_bp.route("/materiales/<int:id_material>/eliminar", methods=["POST"])
+@login_required
+def eliminar_material(id_material):
+    """Permite a un profesor eliminar un material de su curso.
+
+    Args:
+        id_material (int): El ID del material a eliminar.
+
+    Returns:
+        str: Redirige al detalle del curso con un mensaje de éxito o error.
+    """
+    if not current_user.is_profesor():
+        flash("Solo los profesores pueden eliminar materiales.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    material = Material.query.get(id_material)
+
+    if not material:
+        flash("El material no existe.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    if material.curso.id_profesor != current_user.id_user:
+        flash("No tienes permisos para eliminar este material.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    id_curso = material.id_curso
+
+    try:
+        filename = os.path.basename(material.url_archivo)
+        filepath = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+    except Exception:
+        pass
+
+    try:
+        db.session.delete(material)
+        db.session.commit()
+        flash("Material eliminado correctamente.", "success")
+    except Exception:
+        db.session.rollback()
+        flash("No se pudo eliminar el material. Intenta de nuevo.", "error")
+
+    return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
