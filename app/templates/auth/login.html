@@ -32,7 +32,7 @@
 
                 <div class="input-wrapper">
                     <input placeholder="Ingresa tu contraseña" type="password" name="password" id="password" required>
-        
+
                     <button type="button" id="togglePassword" class="toggle-password">
                         <img id="eyeIcon" src="{{ url_for('static', filename='img/view.png') }}" alt="Show Password">
                     </button>
@@ -40,6 +40,13 @@
             </div>
 
             <button type="submit">Iniciar sesión</button>
+            <hr>
+
+            <a href="{{ url_for('auth.register') }}">
+                <button type="button">
+                    Regístrate
+                </button>
+            </a>
         </form>
     </div>
 </div>
