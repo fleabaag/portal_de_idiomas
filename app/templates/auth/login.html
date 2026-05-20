@@ -13,32 +13,27 @@
         <p class="muted">Accede a tu cuenta</p>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="flash-alert alert ">
-            {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="flash-alert alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
         {% endwith %}
+
         <form method="POST">
             <div class="form-group">
                 <label>E-mail</label>
                 <input placeholder="Ejemplo: email@unam.mx" type="email" name="email" required>
             </div>
-
             <div class="form-group">
                 <label>Contraseña</label>
-
                 <div class="input-wrapper">
                     <input placeholder="Ingresa tu contraseña" type="password" name="password" id="password" required>
-
                     <button type="button" id="togglePassword" class="toggle-password">
                         <img id="eyeIcon" src="{{ url_for('static', filename='img/view.png') }}" alt="Show Password">
                     </button>
                 </div>
             </div>
-
             <button type="submit">Iniciar sesión</button>
             <hr>
 
@@ -48,6 +43,10 @@
                 </button>
             </a>
         </form>
+
+        <p class="muted mt-16" style="text-align: center;">
+            ¿No tienes cuenta? <a href="{{ url_for('auth.registro') }}">Regístrate aquí</a>
+        </p>
     </div>
 </div>
 {% endblock %}

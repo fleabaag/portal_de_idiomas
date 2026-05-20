@@ -16,80 +16,50 @@
     <p class="muted">Información general del curso.</p>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="flash-alert alert {{ category }}">
-        {{ message }}
-    </div>
-    {% endfor %}
-    {% endif %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-alert alert {{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
     {% endwith %}
 
     <table>
-        <tr>
-            <th>Campo</th>
-            <th>Valor</th>
-        </tr>
-        <tr>
-            <td>ID</td>
-            <td>{{ curso.id_curso }}</td>
-        </tr>
-        <tr>
-            <td>Idioma</td>
-            <td>{{ curso.idioma.nombre_idioma }}</td>
-        </tr>
-        <tr>
-            <td>Nivel</td>
-            <td>{{ curso.nivel.value }}</td>
-        </tr>
-        <tr>
-            <td>Periodo</td>
-            <td>{{ curso.periodo.value }} {{ curso.anio }}</td>
-        </tr>
-        <tr>
-            <td>Estado</td>
-            <td>{{ curso.estado.value }}</td>
-        </tr>
-        <tr>
-            <td>Descripción</td>
-            <td>{{ curso.descripcion_curso or 'Sin descripción' }}</td>
-        </tr>
-        <tr>
-            <td>Horarios registrados</td>
-            <td>{{ curso.horario|length }}</td>
-        </tr>
-        <tr>
-            <td>Materiales registrados</td>
-            <td>{{ curso.materiales|length }}</td>
-        </tr>
+        <tr><th>Campo</th><th>Valor</th></tr>
+        <tr><td>ID</td><td>{{ curso.id_curso }}</td></tr>
+        <tr><td>Idioma</td><td>{{ curso.idioma.nombre_idioma }}</td></tr>
+        <tr><td>Nivel</td><td>{{ curso.nivel.value }}</td></tr>
+        <tr><td>Periodo</td><td>{{ curso.periodo.value }} {{ curso.anio }}</td></tr>
+        <tr><td>Estado</td><td>{{ curso.estado.value }}</td></tr>
+        <tr><td>Descripción</td><td>{{ curso.descripcion_curso or 'Sin descripción' }}</td></tr>
+        <tr><td>Horarios registrados</td><td>{{ curso.horario|length }}</td></tr>
+        <tr><td>Materiales registrados</td><td>{{ curso.materiales|length }}</td></tr>
     </table>
 
     {% if curso.estado.name == 'BORRADOR' %}
-    <form method="POST" action="{{ url_for('profesor.publicar_curso', id_curso=curso.id_curso) }}" class="inline-form mt-16">
-        <button type="submit" class="button-small">Publicar curso</button>
-    </form>
-    <p class="muted mt-16">Solo puedes subir materiales cuando el curso está publicado.</p>
-    {% else %}
-    <div class="material-upload-section">
-        <h3>Subir material</h3>
-        <p class="muted">Archivos permitidos: PDF, Word, Excel, PowerPoint, texto y formatos comunes de documento.</p>
-
-        <form method="POST" action="{{ url_for('profesor.subir_material', id_curso=curso.id_curso) }}" enctype="multipart/form-data" class="material-form">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="titulo_material">Título</label>
-                    <input type="text" name="titulo_material" id="titulo_material" placeholder="Ej. Guía de la unidad 1" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="archivo_material">Archivo</label>
-                    <input type="file" name="archivo_material" id="archivo_material" required>
-                </div>
-            </div>
-
-            <button type="submit">Subir material</button>
+        <form method="POST" action="{{ url_for('profesor.publicar_curso', id_curso=curso.id_curso) }}" class="inline-form mt-16">
+            <button type="submit" class="button-small">Publicar curso</button>
         </form>
-    </div>
+        <p class="muted mt-16">Solo puedes subir materiales cuando el curso está publicado.</p>
+    {% else %}
+        <div class="material-upload-section">
+            <h3>Subir material</h3>
+            <p class="muted">Archivos permitidos: PDF, Word, Excel, PowerPoint, texto y formatos comunes de documento.</p>
+            <form method="POST" action="{{ url_for('profesor.subir_material', id_curso=curso.id_curso) }}" enctype="multipart/form-data" class="material-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="titulo_material">Título</label>
+                        <input type="text" name="titulo_material" id="titulo_material" placeholder="Ej. Guía de la unidad 1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="archivo_material">Archivo</label>
+                        <input type="file" name="archivo_material" id="archivo_material" required>
+                    </div>
+                </div>
+                <button type="submit">Subir material</button>
+            </form>
+        </div>
     {% endif %}
 </div>
 
@@ -98,22 +68,32 @@
     <p class="muted">Archivos cargados por el profesor para este curso.</p>
 
     {% if curso.materiales %}
-    <table>
-        <tr>
-            <th>Título</th>
-            <th>Tipo</th>
-            <th>Archivo</th>
-        </tr>
-        {% for material in curso.materiales %}
-        <tr>
-            <td>{{ material.titulo }}</td>
-            <td>{{ material.tipo_archivo|upper if material.tipo_archivo else 'Documento' }}</td>
-            <td><a href="{{ material.url_archivo }}" class="button-link">Descargar</a></td>
-        </tr>
-        {% endfor %}
-    </table>
+        <table>
+            <tr>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Archivo</th>
+                <th>Acciones</th>
+            </tr>
+            {% for material in curso.materiales %}
+            <tr>
+                <td>{{ material.titulo }}</td>
+                <td>{{ material.tipo_archivo|upper if material.tipo_archivo else 'Documento' }}</td>
+                <td><a href="{{ material.url_archivo }}" class="button-link">Descargar</a></td>
+                <td class="actions-cell">
+                    <a href="{{ url_for('profesor.actualizar_material', id_material=material.id_material) }}" class="button-link">Editar</a>
+                    <form method="POST"
+                             action="{{ url_for('profesor.eliminar_material', id_material=material.id_material) }}"
+                                class="inline-form"
+                                onsubmit="return confirm('¿Eliminar el material &quot;{{ material.titulo }}&quot;?');">
+                        <button type="submit" class="button-small button-danger">Eliminar</button>
+                    </form>
+            </td>
+            </tr>
+            {% endfor %}
+        </table>
     {% else %}
-    <p class="muted">Aún no se han subido materiales para este curso.</p>
+        <p class="muted">Aún no se han subido materiales para este curso.</p>
     {% endif %}
 </div>
 {% endblock %}
