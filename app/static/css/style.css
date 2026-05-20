@@ -137,6 +137,20 @@ textarea:focus {
     background: var(--accent);
 }
 
+.danger-btn {
+    background-color: #d9534f;
+}
+
+.danger-btn:hover {
+    opacity: 0.9;
+}
+
+.inline-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
 .mt-16 {
     margin-top: 1rem;
 }

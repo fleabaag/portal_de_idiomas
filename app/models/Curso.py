@@ -37,13 +37,13 @@ class Curso(db.Model):
     profesor = db.relationship("Profesor", back_populates="cursos")
 
     # Relación Curso 1:M Material
-    materiales = db.relationship("Material", back_populates="curso")
+    materiales = db.relationship("Material", back_populates="curso", cascade="all, delete-orphan")
 
     # Relación Curso 1:M Horario
-    horario = db.relationship("Horario", back_populates="curso", cascade="all, delete")
+    horario = db.relationship("Horario", back_populates="curso", cascade="all, delete-orphan")
 
     # Relación N:M Curso - Inscripción - Alumnos
-    inscripciones = db.relationship("Inscripcion", back_populates="curso")
+    inscripciones = db.relationship("Inscripcion", back_populates="curso", cascade="all, delete-orphan")
 
     # Relación Idioma 1:M Cursos
     idioma = db.relationship("Idioma", back_populates="cursos")
