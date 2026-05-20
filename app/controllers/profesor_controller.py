@@ -256,3 +256,158 @@ def publicar_curso(id_curso):
     db.session.commit()
     flash("Curso publicado correctamente.", "success")
     return redirect(url_for("profesor.dashboard"))
+
+@profesor_bp.route("/materiales/<int:id_material>/eliminar", methods=["POST"])
+@login_required
+def eliminar_material(id_material):
+    """Permite a un profesor eliminar un material de su curso.
+
+    Args:
+        id_material (int): El ID del material a eliminar.
+
+    Returns:
+        str: Redirige al detalle del curso con un mensaje de éxito o error.
+    """
+    if not current_user.is_profesor():
+        flash("Solo los profesores pueden eliminar materiales.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    material = Material.query.get(id_material)
+
+    if not material:
+        flash("El material no existe.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    if material.curso.id_profesor != current_user.id_user:
+        flash("No tienes permisos para eliminar este material.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    id_curso = material.id_curso
+
+    try:
+        filename = os.path.basename(material.url_archivo)
+        filepath = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+    except Exception:
+        pass
+
+    try:
+        db.session.delete(material)
+        db.session.commit()
+        flash("Material eliminado correctamente.", "success")
+    except Exception:
+        db.session.rollback()
+        flash("No se pudo eliminar el material. Intenta de nuevo.", "error")
+
+    return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
+
+@profesor_bp.route("/cursos/<int:id_curso>/eliminar", methods=["POST"])
+@login_required
+def eliminar_curso(id_curso):
+    """Permite eliminar un curso en estado BORRADOR o CERRADO."""
+    if not current_user.is_profesor():
+        flash("Solo los profesores pueden eliminar cursos.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    curso = Curso.query.filter_by(
+        id_curso=id_curso,
+        id_profesor=current_user.id_user,
+    ).first()
+
+    if not curso:
+        flash("No tienes acceso a ese curso.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    if curso.estado == EstadoCurso.PUBLICADO:
+        flash("No puedes eliminar un curso publicado. Ciérralo primero.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    try:
+        for material in curso.materiales:
+            try:
+                filename = os.path.basename(material.url_archivo)
+                filepath = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+            except Exception:
+                pass
+
+        for material in list(curso.materiales):
+            db.session.delete(material)
+        for inscripcion in list(curso.inscripciones):
+            db.session.delete(inscripcion)
+
+        db.session.delete(curso)
+        db.session.commit()
+        flash("Curso eliminado correctamente.", "success")
+    except Exception:
+        db.session.rollback()
+        flash("No se pudo eliminar el curso. Intenta de nuevo.", "error")
+
+    return redirect(url_for("profesor.dashboard"))
+
+
+@profesor_bp.route("/materiales/<int:id_material>/editar", methods=["GET", "POST"])
+@login_required
+def actualizar_material(id_material):
+    """Permite a un profesor editar el titulo y/o reemplazar el archivo de un material."""
+    if not current_user.is_profesor():
+        flash("Solo los profesores pueden actualizar materiales.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    material = Material.query.get(id_material)
+
+    if not material:
+        flash("El material no existe.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    if material.curso.id_profesor != current_user.id_user:
+        flash("No tienes permisos para editar este material.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    if request.method == "POST":
+        nuevo_titulo = request.form.get("titulo_material", "").strip()
+        nuevo_archivo = request.files.get("archivo_material")
+
+        if not nuevo_titulo:
+            flash("El título del material es obligatorio.", "error")
+            return redirect(url_for("profesor.actualizar_material", id_material=id_material))
+
+        try:
+            material.titulo = nuevo_titulo
+
+            if nuevo_archivo and nuevo_archivo.filename != "":
+                if not allowed_material_file(nuevo_archivo.filename):
+                    flash("Formato no permitido.", "error")
+                    return redirect(url_for("profesor.actualizar_material", id_material=id_material))
+
+                try:
+                    filename_viejo = os.path.basename(material.url_archivo)
+                    filepath_viejo = os.path.join(current_app.config["UPLOAD_FOLDER"], filename_viejo)
+                    if os.path.exists(filepath_viejo):
+                        os.remove(filepath_viejo)
+                except Exception:
+                    pass
+
+                original_filename = secure_filename(nuevo_archivo.filename)
+                extension = original_filename.rsplit(".", 1)[1].lower()
+                stored_filename = secure_filename(
+                    f"curso_{material.id_curso}_{material.id_material}_{original_filename}"
+                )
+
+                upload_directory = current_app.config["UPLOAD_FOLDER"]
+                os.makedirs(upload_directory, exist_ok=True)
+                nuevo_archivo.save(os.path.join(upload_directory, stored_filename))
+
+                material.tipo_archivo = extension
+                material.url_archivo = url_for("profesor.descargar_material", filename=stored_filename)
+
+            db.session.commit()
+            flash("Material actualizado correctamente.", "success")
+            return redirect(url_for("profesor.curso_detalle", id_curso=material.id_curso))
+        except Exception:
+            db.session.rollback()
+            flash("No se pudo actualizar el material. Intenta de nuevo.", "error")
+
+    return render_template("profesor/profesor-editar-material.html", material=material)

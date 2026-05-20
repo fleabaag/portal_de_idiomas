@@ -264,3 +264,22 @@ td {
     pointer-events: none;
     transition: opacity 0.2s ease;
 }
+.button-danger {
+    background-color: #DC2626;
+    border-color: #DC2626;
+    color: white;
+}
+.button-danger:hover {
+    background-color: #B91C1C;
+    opacity: 1;
+}
+
+.button-danger {
+    background-color: #DC2626;
+    border-color: #DC2626;
+    color: white;
+}
+.button-danger:hover {
+    background-color: #B91C1C;
+    opacity: 1;
+}

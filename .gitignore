@@ -1,6 +1,31 @@
-.env
-.venv
-.flaskenv
-instance/
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Python cache
 __pycache__/
-*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Variables de entorno
+.env
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Uploads del usuario (archivos que sube la app)
+instance/uploads/
+
+# Logs
+*.log
+.flaskenv
