@@ -2,32 +2,65 @@
 
 {% block navbar %}
 <div class="navbar">
-    <h1>Panel de Estudiante/Maestro</h1>
+    <h1>Panel del Alumno</h1>
     <div>
-        <a href="#">Cursos</a>
-        <a href="#">Perfil</a>
-        <a href="/">Cerrar Sesión</a>
+        <a href="{{ url_for('alumno.dashboard') }}">Catálogo</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
     </div>
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="card">
-    <h2>Información del usuario</h2>
-    <p class="muted">Esta es la vista determinada para el usuario</p>
+    <h2>Bienvenido, {{ current_user.nombre_completo }}</h2>
+    <p class="muted">Explora los cursos disponibles y inscríbete a los que te interesen.</p>
 
-    <table>
-        <tr>
-            <th>Usuario</th>
-            <th>Email</th>
-            <th>Rol</th>
-            
-        </tr>
-        <tr>
-            <td>{{ current_user.nombre_completo }}</td>
-            <th>{{ current_user.email }}</th>
-            <th>{{ current_user.rol_display }}</th>
-        </tr>
-    </table>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-alert alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<div class="card">
+    <h2>Catálogo de cursos disponibles</h2>
+    <p class="muted">Cursos publicados por los profesores. Da click en "Inscribirse" para registrarte.</p>
+
+    {% if cursos %}
+        <table>
+            <tr>
+                <th>Idioma</th>
+                <th>Nivel</th>
+                <th>Periodo</th>
+                <th>Año</th>
+                <th>Profesor</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+            {% for curso in cursos %}
+            <tr>
+                <td>{{ curso.idioma.nombre_idioma }}</td>
+                <td>{{ curso.nivel.value }}</td>
+                <td>{{ curso.periodo.value }}</td>
+                <td>{{ curso.anio }}</td>
+                <td>{{ curso.profesor.nombre_completo }}</td>
+                <td>{{ curso.descripcion_curso or 'Sin descripción' }}</td>
+                <td class="actions-cell">
+                    {% if curso.id_curso in ids_inscritos %}
+                        <span class="muted">Ya inscrito ✓</span>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('alumno.inscribir_curso', id_curso=curso.id_curso) }}" class="inline-form">
+                            <button type="submit" class="button-small">Inscribirse</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="muted">No hay cursos publicados todavía. Vuelve más tarde.</p>
+    {% endif %}
 </div>
 {% endblock %}

@@ -81,13 +81,14 @@
                 <td>{{ material.tipo_archivo|upper if material.tipo_archivo else 'Documento' }}</td>
                 <td><a href="{{ material.url_archivo }}" class="button-link">Descargar</a></td>
                 <td class="actions-cell">
+                    <a href="{{ url_for('profesor.actualizar_material', id_material=material.id_material) }}" class="button-link">Editar</a>
                     <form method="POST"
-                          action="{{ url_for('profesor.eliminar_material', id_material=material.id_material) }}"
-                          class="inline-form"
-                          onsubmit="return confirm('¿Eliminar el material &quot;{{ material.titulo }}&quot;? Esta acción no se puede deshacer.');">
+                             action="{{ url_for('profesor.eliminar_material', id_material=material.id_material) }}"
+                                class="inline-form"
+                                onsubmit="return confirm('¿Eliminar el material &quot;{{ material.titulo }}&quot;?');">
                         <button type="submit" class="button-small button-danger">Eliminar</button>
                     </form>
-                </td>
+            </td>
             </tr>
             {% endfor %}
         </table>
