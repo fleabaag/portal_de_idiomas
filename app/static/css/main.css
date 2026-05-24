@@ -1,0 +1,75 @@
+@import url("./base/reset.css");
+@import url("./base/variables.css");
+@import url("./base/typography.css");
+@import url("./base/utilities.css");
+
+@import url("./layout/auth.css");
+@import url("./layout/dashboard.css");
+@import url("./layout/sidebar.css");
+@import url("./layout/breadcrumbs.css");
+
+@import url("./components/buttons.css");
+@import url("./components/forms.css");
+@import url("./components/cards.css");
+@import url("./components/tables.css");
+@import url("./components/modals.css");
+
+@import url("./pages/admin.css");
+@import url("./pages/alumno.css");
+@import url("./pages/login.css");
+@import url("./pages/profesor.css");
+@import url("./pages/register.css");
+
+/* FLASH ALERTS ESTILOS */
+
+.flash-alert {
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+
+    font-size: 0.95rem;
+    font-weight: 500;
+
+    border-left: 5px solid;
+    backdrop-filter: blur(4px);
+
+    transition: opacity .4s ease;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+}
+
+.flash-alert.success {
+    background: rgba(111, 159, 90, .16);
+    color: #d7f0c9;
+    border-color: var(--alert-success);
+}
+
+.flash-alert.error {
+    background: rgba(201, 74, 74, .18);
+    color: #ffd8d8;
+    border-color: var(--alert-error);
+}
+
+.flash-alert.warning {
+    background: rgba(215, 169, 74, .18);
+    color: #fff1c9;
+    border-color: var(--alert-warning);
+}
+
+.flash-alert.info {
+    background: rgba(138, 168, 200, .16);
+    color: #dbeaff;
+    border-color: var(--alert-info);
+}
+
+.flash-alert.validation {
+    background: rgba(185, 130, 90, .18);
+    color: #ffe7d3;
+    border-color: var(--alert-validation);
+}
+
+
+.flash-alert.security {
+    background: rgba(143, 107, 184, .16);
+    color: #efe3ff;
+    border-color: var(--alert-security);
+}

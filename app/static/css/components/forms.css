@@ -1,0 +1,40 @@
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+}
+
+input {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    border: none;
+    background: var(--color-input);
+    display: flex;
+    line-height: 1;
+    box-sizing: border-box;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-40%);
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.toggle-password img {
+    width: 22px;
+}

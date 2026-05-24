@@ -7,7 +7,6 @@ from app.models.Alumno import Alumno
 from app.models.enums import RolUsuario
 from app.extensions import db
 
-
 auth_bp = Blueprint("auth", __name__)
 
 
@@ -26,6 +25,7 @@ def login():
 
         if user and user.check_contrasena(password):
             login_user(user)
+
             if user.is_admin():
                 return redirect(url_for("admin.dashboard"))
             if user.is_profesor():
@@ -54,7 +54,7 @@ def register():
 
         nombre = request.form["nombre"]
         primer_apellido = request.form["primer_apellido"]
-        segundo_apellido = request.form["segundo_apellido"]
+        segundo_apellido = request.form["segundo_apellido"] or None
 
         email = request.form["email"]
 
@@ -65,12 +65,16 @@ def register():
         # VALIDACIONES
         # =========================
 
+        if not nombre or not primer_apellido or not email or not password:
+            flash("Los campos marcados con asterisco son obligatorios.", "warning")
+            return render_template("auth/register.html", form_data=request.form)
+
         # Validar forma de email
         email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
 
         if not re.match(email_pattern, email):
 
-            flash("Ingresa un correo electrónico válido", "error")
+            flash("Ingresa un correo electrónico válido", "validation")
 
             return render_template("auth/register.html", form_data=request.form)
 
@@ -79,41 +83,48 @@ def register():
 
         if existing_user:
             flash("El correo ya está registrado", "error")
-            render_template("auth/register.html", form_data=request.form)
+            return render_template("auth/register.html", form_data=request.form)
 
         # Confirmar contraseña
         if password != confirm_password:
-            flash("Las contraseñas no coinciden", "error")
-            render_template("auth/register.html", form_data=request.form)
+            flash("Las contraseñas no coinciden", "validation")
+            return render_template("auth/register.html", form_data=request.form)
 
         # Password segura
         if not valid_password(password):
             flash(
                 "La contraseña debe tener mínimo 8 caracteres, "
                 "una mayúscula, una minúscula y un número",
-                "error",
+                "validation",
             )
-            render_template("auth/register.html", form_data=request.form)
+            return render_template("auth/register.html", form_data=request.form)
 
         # =========================
         # CREAR ALUMNO
         # =========================
 
-        alumno = Alumno(
-            nombre=nombre,
-            primer_apellido=primer_apellido,
-            segundo_apellido=segundo_apellido,
-            email=email,
-            rol=RolUsuario.ALUMNO,
-        )
+        try:
+            alumno = Alumno(
+                nombre=nombre,
+                primer_apellido=primer_apellido,
+                segundo_apellido=segundo_apellido,
+                email=email,
+                rol=RolUsuario.ALUMNO,
+            )
 
-        alumno.set_contrasena(password)
+            alumno.set_contrasena(password)
 
-        db.session.add(alumno)
-        db.session.commit()
+            db.session.add(alumno)
+            db.session.commit()
 
-        flash("Cuenta creada correctamente.", "success")
-        return redirect(url_for("auth.login"))
+            flash("Cuenta creada correctamente", "success")
+            return redirect(url_for("auth.login"))
+
+        except Exception:
+            db.session.rollback()
+            flash("No se pudo crear la cuenta", "error")
+
+            return render_template("auth/register.html", form_data=request.form)
 
     return render_template("auth/register.html")
 
@@ -147,46 +158,3 @@ def valid_password(password):
     pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
 
     return re.match(pattern, password)
-@auth_bp.route("/registro", methods=["GET", "POST"])
-def registro():
-    """Permite que un visitante se registre con rol ALUMNO."""
-    if request.method == "POST":
-        nombre = request.form.get("nombre", "").strip()
-        primer_apellido = request.form.get("primer_apellido", "").strip()
-        segundo_apellido = request.form.get("segundo_apellido", "").strip() or None
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
-        password_confirm = request.form.get("password_confirm", "")
-
-        if not nombre or not primer_apellido or not email or not password:
-            flash("Los campos con asterisco son obligatorios.", "error")
-            return render_template("auth/registro.html")
-
-        if password != password_confirm:
-            flash("Las contraseñas no coinciden.", "error")
-            return render_template("auth/registro.html")
-
-        if Usuario.query.filter_by(email=email).first():
-            flash("El correo ya está en uso.", "error")
-            return render_template("auth/registro.html")
-
-        try:
-            nuevo_alumno = Alumno(
-                email=email,
-                nombre=nombre,
-                primer_apellido=primer_apellido,
-                segundo_apellido=segundo_apellido,
-                rol=RolUsuario.ALUMNO,
-            )
-            nuevo_alumno.set_contrasena(password)
-            db.session.add(nuevo_alumno)
-            db.session.commit()
-
-            login_user(nuevo_alumno)
-            flash("Bienvenido al Portal de Idiomas.", "success")
-            return redirect(url_for("alumno.dashboard"))
-        except Exception:
-            db.session.rollback()
-            flash("No se pudo crear la cuenta. Intenta de nuevo.", "error")
-
-    return render_template("auth/registro.html")

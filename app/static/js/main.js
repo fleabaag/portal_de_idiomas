@@ -1,20 +1,40 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     // Mostrar / ocultar contraseña
-    const toggleBtn = document.getElementById("togglePassword");
-    const passwordInput = document.getElementById("password");
-    const eyeIcon = document.getElementById("eyeIcon");
+    function setupPasswordToggle(
+        buttonId,
+        inputId,
+        iconId
+    ) {
+        const button = document.getElementById(buttonId);
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
 
-    if (toggleBtn && passwordInput) {
-        toggleBtn.addEventListener("click", function () {
-            const isHidden = passwordInput.type === "password";
+        if (!button || !input || !icon) return;
 
-            passwordInput.type = isHidden ? "text" : "password";
-            eyeIcon.src = isHidden
+        button.addEventListener("click", () => {
+            const hidden = input.type === "password";
+
+            input.type = hidden ? "text" : "password";
+
+            icon.src = hidden
                 ? "/static/img/cover.png"
                 : "/static/img/view.png";
         });
     }
+
+    setupPasswordToggle(
+        "togglePassword",
+        "password",
+        "eyeIcon"
+    );
+
+    setupPasswordToggle(
+        "toggleConfirmPassword",
+        "confirm_password",
+        "confirmEyeIcon"
+    );
+
 
     // Ocultar alertas
     setTimeout(function () {

@@ -27,9 +27,9 @@ def dashboard():
         descripcion_idioma = request.form.get("descripcion_idioma", "").strip() or None
 
         if not nombre_idioma:
-            flash("El nombre del idioma es obligatorio.", "error")
+            flash("El nombre del idioma es obligatorio.", "validation")
         elif Idioma.query.filter_by(nombre_idioma=nombre_idioma).first():
-            flash("Ese idioma ya existe.", "error")
+            flash("Ese idioma ya existe.", "info")
         else:
             idioma = Idioma(
                 nombre_idioma=nombre_idioma,
@@ -93,7 +93,7 @@ def crear_profesor():
         # =========================
 
         if not nombre or not primer_apellido:
-            flash("Nombre y apellido son obligatorios", "error")
+            flash("Nombre y apellido son obligatorios", "validation")
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
 
@@ -102,7 +102,7 @@ def crear_profesor():
 
         if not re.match(email_pattern, email):
 
-            flash("Correo electrónico inválido", "error")
+            flash("Correo electrónico inválido", "validation")
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
 
@@ -122,7 +122,7 @@ def crear_profesor():
                 "La contraseña debe tener mínimo "
                 "8 caracteres, una mayúscula, "
                 "una minúscula y un número",
-                "error",
+                "validation",
             )
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
@@ -130,7 +130,7 @@ def crear_profesor():
         # Confirmación password
         if password != confirm_password:
 
-            flash("Las contraseñas no coinciden", "error")
+            flash("Las contraseñas no coinciden", "validation")
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
 
@@ -143,7 +143,7 @@ def crear_profesor():
 
         except ValueError:
 
-            flash("El sueldo debe ser mayor a 0", "error")
+            flash("El sueldo debe ser mayor a 0", "validation")
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
 
@@ -201,7 +201,7 @@ def cambiar_sueldo(id_profesor):
 
     except ValueError:
 
-        flash("El sueldo debe ser mayor a 0", "error")
+        flash("El sueldo debe ser mayor a 0", "validation")
 
         return redirect(url_for("admin.profesores"))
 

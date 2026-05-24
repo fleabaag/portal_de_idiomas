@@ -172,15 +172,15 @@ def subir_material(id_curso):
     archivo = request.files.get("archivo_material")
 
     if not titulo:
-        flash("El título del material es obligatorio.", "error")
+        flash("El título del material es obligatorio.", "validation")
         return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
     if not archivo or archivo.filename == "":
-        flash("Debes seleccionar un archivo.", "error")
+        flash("Debes seleccionar un archivo.", "validation")
         return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
     if not allowed_material_file(archivo.filename):
-        flash("Formato no permitido. Usa PDF, Word, Excel, PowerPoint, texto u otros documentos comunes.", "error")
+        flash("Formato no permitido. Usa PDF, Word, Excel, PowerPoint, texto u otros documentos comunes.", "validation")
         return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
     original_filename = secure_filename(archivo.filename)
@@ -245,7 +245,7 @@ def publicar_curso(id_curso):
         return redirect(url_for("profesor.dashboard"))
 
     if curso.estado == EstadoCurso.PUBLICADO:
-        flash("Ese curso ya está publicado.", "success")
+        flash("Ese curso ya está publicado.", "error")
         return redirect(url_for("profesor.dashboard"))
 
     if curso.estado == EstadoCurso.CERRADO:
@@ -371,7 +371,7 @@ def actualizar_material(id_material):
         nuevo_archivo = request.files.get("archivo_material")
 
         if not nuevo_titulo:
-            flash("El título del material es obligatorio.", "error")
+            flash("El título del material es obligatorio.", "validation")
             return redirect(url_for("profesor.actualizar_material", id_material=id_material))
 
         try:
@@ -379,7 +379,7 @@ def actualizar_material(id_material):
 
             if nuevo_archivo and nuevo_archivo.filename != "":
                 if not allowed_material_file(nuevo_archivo.filename):
-                    flash("Formato no permitido.", "error")
+                    flash("Formato no permitido.", "validation")
                     return redirect(url_for("profesor.actualizar_material", id_material=id_material))
 
                 try:
