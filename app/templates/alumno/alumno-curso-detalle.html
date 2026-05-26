@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+<div class="navbar">
+    <h1>Detalle del curso</h1>
+    <div>
+        <a href="{{ url_for('alumno.dashboard') }}">Volver al catálogo</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>{{ curso.idioma.nombre_idioma }} - {{ curso.nivel.value }}</h2>
+    <p class="muted">Revisa la información del curso y descarga los materiales disponibles.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-alert alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table>
+        <tr>
+            <td>Periodo</td>
+            <td>{{ curso.periodo.value }} {{ curso.anio }}</td>
+        </tr>
+        <tr>
+            <td>Profesor</td>
+            <td>{{ curso.profesor.nombre_completo }}</td>
+        </tr>
+        <tr>
+            <td>Descripción</td>
+            <td>{{ curso.descripcion_curso or 'Sin descripción' }}</td>
+        </tr>
+        <tr>
+            <td>Materiales</td>
+            <td>{{ curso.materiales|length }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Materiales del curso</h2>
+    <p class="muted">Archivos cargados por el profesor.</p>
+
+    {% if curso.materiales %}
+    <table>
+        <tr>
+            <th>Título</th>
+            <th>Tipo</th>
+            <th>Archivo</th>
+        </tr>
+        {% for material in curso.materiales %}
+        <tr>
+            <td>{{ material.titulo }}</td>
+            <td>{{ material.tipo_archivo|upper if material.tipo_archivo else 'Documento' }}</td>
+            <td><a href="{{ material.url_archivo }}" class="button-link">Descargar</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p class="muted">Todavía no hay materiales para este curso.</p>
+    {% endif %}
+</div>
+{% endblock %}

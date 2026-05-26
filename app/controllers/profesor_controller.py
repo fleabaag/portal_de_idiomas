@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 
 from app.extensions import db
-from app.models import Curso, EstadoCurso, Idioma, Material, Niveles, PeriodoEnum
+from app.models import Curso, EstadoCurso, Idioma, Inscripcion, Material, Niveles, PeriodoEnum
 
 profesor_bp = Blueprint("profesor", __name__, url_prefix="/profesor")
 
@@ -138,6 +138,99 @@ def curso_detalle(id_curso):
         return redirect(url_for("profesor.dashboard"))
 
     return render_template("profesor/profesor-curso-detalle.html", curso=curso)
+
+
+@profesor_bp.route("/cursos/<int:id_curso>/editar", methods=["GET", "POST"])
+@login_required
+def editar_curso(id_curso):
+    """Permite a un profesor editar la información básica de un curso."""
+    if not current_user.is_profesor():
+        flash("Solo los profesores pueden editar cursos.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    curso = Curso.query.filter_by(
+        id_curso=id_curso,
+        id_profesor=current_user.id_user,
+    ).first()
+
+    if not curso:
+        flash("No tienes acceso a ese curso.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    if request.method == "POST":
+        try:
+            idioma_id = int(request.form.get("id_idioma", ""))
+            nivel_key = request.form.get("nivel", "")
+            periodo_key = request.form.get("periodo", "")
+            anio = int(request.form.get("anio", ""))
+            descripcion = request.form.get("descripcion_curso", "").strip() or None
+
+            if anio < 2000 or anio > 2100:
+                raise ValueError("El año debe estar entre 2000 y 2100.")
+
+            idioma = Idioma.query.get(idioma_id)
+            if not idioma:
+                raise ValueError("El idioma seleccionado no existe.")
+
+            if nivel_key not in Niveles.__members__:
+                raise ValueError("El nivel seleccionado no es válido.")
+
+            if periodo_key not in PeriodoEnum.__members__:
+                raise ValueError("El periodo seleccionado no es válido.")
+
+            if curso.estado == EstadoCurso.CERRADO:
+                raise ValueError("No puedes editar un curso cerrado.")
+
+            curso.id_idioma = idioma.id_idioma
+            curso.nivel = Niveles[nivel_key]
+            curso.periodo = PeriodoEnum[periodo_key]
+            curso.anio = anio
+            curso.descripcion_curso = descripcion
+
+            db.session.commit()
+            flash("Curso actualizado correctamente.", "success")
+            return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
+        except ValueError as error:
+            flash(str(error), "error")
+        except Exception:
+            db.session.rollback()
+            flash("No se pudo actualizar el curso. Intenta de nuevo.", "error")
+
+    idiomas = Idioma.query.order_by(Idioma.nombre_idioma).all()
+    return render_template(
+        "profesor/profesor-editar-curso.html",
+        curso=curso,
+        idiomas=idiomas,
+        niveles=Niveles,
+        periodos=PeriodoEnum,
+    )
+
+
+@profesor_bp.route("/cursos/<int:id_curso>/cerrar", methods=["POST"])
+@login_required
+def cerrar_curso(id_curso):
+    """Cierra un curso para evitar nuevas inscripciones o publicación."""
+    if not current_user.is_profesor():
+        flash("Solo los profesores pueden cerrar cursos.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    curso = Curso.query.filter_by(
+        id_curso=id_curso,
+        id_profesor=current_user.id_user,
+    ).first()
+
+    if not curso:
+        flash("No tienes acceso a ese curso.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    if curso.estado == EstadoCurso.CERRADO:
+        flash("Ese curso ya está cerrado.", "success")
+        return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
+
+    curso.estado = EstadoCurso.CERRADO
+    db.session.commit()
+    flash("Curso cerrado correctamente.", "success")
+    return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
 
 @profesor_bp.route("/cursos/<int:id_curso>/materiales", methods=["POST"])
@@ -346,6 +439,55 @@ def eliminar_curso(id_curso):
         flash("No se pudo eliminar el curso. Intenta de nuevo.", "error")
 
     return redirect(url_for("profesor.dashboard"))
+
+
+@profesor_bp.route("/cursos/<int:id_curso>/calificaciones", methods=["POST"])
+@login_required
+def actualizar_calificacion_curso(id_curso):
+    """Permite al profesor registrar o actualizar calificaciones de sus alumnos."""
+    if not current_user.is_profesor():
+        flash("Solo los profesores pueden subir calificaciones.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    curso = Curso.query.filter_by(
+        id_curso=id_curso,
+        id_profesor=current_user.id_user,
+    ).first()
+
+    if not curso:
+        flash("No tienes acceso a ese curso.", "error")
+        return redirect(url_for("profesor.dashboard"))
+
+    try:
+        inscripcion_id_alumno = int(request.form.get("id_alumno", ""))
+        calificacion_raw = request.form.get("calificacion", "").strip()
+
+        inscripcion = Inscripcion.query.filter_by(
+            id_alumno=inscripcion_id_alumno,
+            id_curso=curso.id_curso,
+        ).first()
+
+        if not inscripcion:
+            flash("La inscripción no existe para este curso.", "error")
+            return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
+
+        if calificacion_raw == "":
+            inscripcion.calificacion = None
+        else:
+            calificacion = float(calificacion_raw)
+            if calificacion < 0.0 or calificacion > 10.0:
+                raise ValueError("La calificación debe estar entre 0.0 y 10.0.")
+            inscripcion.calificacion = calificacion
+
+        db.session.commit()
+        flash("Calificación actualizada correctamente.", "success")
+    except ValueError as error:
+        flash(str(error), "error")
+    except Exception:
+        db.session.rollback()
+        flash("No se pudo actualizar la calificación. Intenta de nuevo.", "error")
+
+    return redirect(url_for("profesor.curso_detalle", id_curso=id_curso))
 
 
 @profesor_bp.route("/materiales/<int:id_material>/editar", methods=["GET", "POST"])
