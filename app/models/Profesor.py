@@ -21,7 +21,7 @@ class Profesor(Usuario):
     # =========================
     
     cursos = db.relationship(
-        "Curso", back_populates="profesor"
+        "Curso", back_populates="profesor", cascade="all, delete-orphan"
     )  # Relacion Profesor 1:M Curso
 
     profesor_idioma = db.relationship(

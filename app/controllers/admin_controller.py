@@ -225,7 +225,7 @@ def crear_profesor():
         # =========================
 
         if not nombre or not primer_apellido:
-            flash("Nombre y apellido son obligatorios", "validation")
+            flash("Nombre y apellido son obligatorios", "error")
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
 
@@ -233,8 +233,7 @@ def crear_profesor():
         email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
 
         if not re.match(email_pattern, email):
-
-            flash("Correo electrónico inválido", "validation")
+            flash("Correo electrónico inválido", "error")
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
 
@@ -254,15 +253,14 @@ def crear_profesor():
                 "La contraseña debe tener mínimo "
                 "8 caracteres, una mayúscula, "
                 "una minúscula y un número",
-                "validation",
+                "error",
             )
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
 
         # Confirmación password
         if password != confirm_password:
-
-            flash("Las contraseñas no coinciden", "validation")
+            flash("Las contraseñas no coinciden", "error")
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
 
@@ -274,8 +272,7 @@ def crear_profesor():
                 raise ValueError
 
         except ValueError:
-
-            flash("El sueldo debe ser mayor a 0", "validation")
+            flash("El sueldo debe ser mayor a 0", "error")
 
             return render_template("admin/crear-profesor.html", form_data=request.form)
 
@@ -332,8 +329,7 @@ def cambiar_sueldo(id_profesor):
             raise ValueError
 
     except ValueError:
-
-        flash("El sueldo debe ser mayor a 0", "validation")
+        flash("El sueldo debe ser mayor a 0", "error")
 
         return redirect(url_for("admin.profesores"))
 
