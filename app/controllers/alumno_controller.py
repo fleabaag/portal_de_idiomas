@@ -22,12 +22,36 @@ def dashboard():
         .all()
     )
     ids_inscritos = {i.id_curso for i in current_user.inscripciones}
+    cursos_inscritos = [inscripcion.curso for inscripcion in current_user.inscripciones]
 
     return render_template(
         "alumno/alumno-dashboard.html",
         cursos=cursos_publicados,
         ids_inscritos=ids_inscritos,
+        cursos_inscritos=cursos_inscritos,
     )
+
+
+@alumno_bp.route("/cursos/<int:id_curso>", methods=["GET"])
+@login_required
+def curso_detalle(id_curso):
+    """Muestra el detalle de un curso inscrito con sus materiales."""
+    if not current_user.is_alumno():
+        return redirect(url_for("auth.login"))
+
+    curso = Curso.query.get(id_curso)
+
+    if not curso:
+        flash("Ese curso no existe.", "error")
+        return redirect(url_for("alumno.dashboard"))
+
+    inscrito = any(inscripcion.id_curso == curso.id_curso for inscripcion in current_user.inscripciones)
+
+    if not inscrito:
+        flash("Debes inscribirte primero para ver los materiales de este curso.", "error")
+        return redirect(url_for("alumno.dashboard"))
+
+    return render_template("alumno/alumno-curso-detalle.html", curso=curso)
 
 
 @alumno_bp.route("/cursos/<int:id_curso>/inscribir", methods=["POST"])

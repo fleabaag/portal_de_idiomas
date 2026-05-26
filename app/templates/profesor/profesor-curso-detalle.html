@@ -37,6 +37,23 @@
         <tr><td>Materiales registrados</td><td>{{ curso.materiales|length }}</td></tr>
     </table>
 
+    <div class="actions-cell mt-16">
+        <a href="{{ url_for('profesor.editar_curso', id_curso=curso.id_curso) }}" class="button-link">Editar curso</a>
+        {% if curso.estado.name != 'CERRADO' %}
+        <form method="POST" action="{{ url_for('profesor.cerrar_curso', id_curso=curso.id_curso) }}" class="inline-form">
+            <button type="submit" class="button-small">Cerrar curso</button>
+        </form>
+        {% endif %}
+        {% if curso.estado.name != 'PUBLICADO' %}
+        <form method="POST"
+              action="{{ url_for('profesor.eliminar_curso', id_curso=curso.id_curso) }}"
+              class="inline-form"
+              onsubmit="return confirm('¿Eliminar el curso &quot;{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}&quot;? Se borraran tambien sus materiales e inscripciones.');">
+            <button type="submit" class="button-small button-danger">Eliminar curso</button>
+        </form>
+        {% endif %}
+    </div>
+
     {% if curso.estado.name == 'BORRADOR' %}
         <form method="POST" action="{{ url_for('profesor.publicar_curso', id_curso=curso.id_curso) }}" class="inline-form mt-16">
             <button type="submit" class="button-small">Publicar curso</button>
@@ -60,6 +77,40 @@
                 <button type="submit">Subir material</button>
             </form>
         </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Calificaciones</h2>
+    <p class="muted">Registra o actualiza la nota de cada alumno inscrito.</p>
+
+    {% if curso.inscripciones %}
+        <table>
+            <tr>
+                <th>Alumno</th>
+                <th>Email</th>
+                <th>Fecha inscripción</th>
+                <th>Calificación</th>
+                <th>Acciones</th>
+            </tr>
+            {% for inscripcion in curso.inscripciones %}
+            <tr>
+                <td>{{ inscripcion.alumno.nombre_completo }}</td>
+                <td>{{ inscripcion.alumno.email }}</td>
+                <td>{{ inscripcion.fecha_inscripcion.strftime('%Y-%m-%d') if inscripcion.fecha_inscripcion else '-' }}</td>
+                <td>{{ inscripcion.calificacion if inscripcion.calificacion is not none else 'Sin calificar' }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('profesor.actualizar_calificacion_curso', id_curso=curso.id_curso) }}" class="inline-form">
+                        <input type="hidden" name="id_alumno" value="{{ inscripcion.id_alumno }}">
+                        <input type="number" name="calificacion" min="0" max="10" step="0.1" value="{{ inscripcion.calificacion if inscripcion.calificacion is not none else '' }}" placeholder="0.0-10.0" style="width: 110px;">
+                        <button type="submit" class="button-small">Guardar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="muted">Todavía no hay alumnos inscritos en este curso.</p>
     {% endif %}
 </div>
 

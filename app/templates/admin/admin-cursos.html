@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+<div class="navbar">
+    <h1>Administrar Cursos</h1>
+    <div>
+        <a href="{{ url_for('admin.dashboard') }}">Idiomas</a>
+        <a href="{{ url_for('admin.cursos') }}">Cursos</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Todos los cursos</h2>
+    <p class="muted">Consulta, edita y cierra cualquier curso registrado en el sistema.</p>
+
+    <form method="GET" class="course-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="profesor_id">Profesor</label>
+                <select name="profesor_id" id="profesor_id">
+                    <option value="">Todos</option>
+                    {% for profesor in profesores %}
+                    <option value="{{ profesor.id_profesor }}" {% if filtros.profesor_id == profesor.id_profesor %}selected{% endif %}>{{ profesor.nombre_completo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="idioma_id">Idioma</label>
+                <select name="idioma_id" id="idioma_id">
+                    <option value="">Todos</option>
+                    {% for idioma in idiomas %}
+                    <option value="{{ idioma.id_idioma }}" {% if filtros.idioma_id == idioma.id_idioma %}selected{% endif %}>{{ idioma.nombre_idioma }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select name="estado" id="estado">
+                    <option value="">Todos</option>
+                    {% for estado in estados %}
+                    <option value="{{ estado.name }}" {% if filtros.estado == estado.name %}selected{% endif %}>{{ estado.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="actions-cell">
+            <button type="submit">Aplicar filtros</button>
+            <a href="{{ url_for('admin.cursos') }}" class="button-link">Limpiar</a>
+        </div>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-alert alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if cursos %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Curso</th>
+            <th>Profesor</th>
+            <th>Periodo</th>
+            <th>Año</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        {% for curso in cursos %}
+        <tr>
+            <td>{{ curso.id_curso }}</td>
+            <td>{{ curso.idioma.nombre_idioma }} - {{ curso.nivel.value }}</td>
+            <td>{{ curso.profesor.nombre_completo }}</td>
+            <td>{{ curso.periodo.value }}</td>
+            <td>{{ curso.anio }}</td>
+            <td>{{ curso.estado.value }}</td>
+            <td class="actions-cell">
+                <a href="{{ url_for('admin.curso_detalle', id_curso=curso.id_curso) }}" class="button-link">Ver</a>
+                <a href="{{ url_for('admin.editar_curso', id_curso=curso.id_curso) }}" class="button-link">Editar</a>
+                {% if curso.estado.name != 'CERRADO' %}
+                <form method="POST" action="{{ url_for('admin.cerrar_curso', id_curso=curso.id_curso) }}" class="inline-form">
+                    <button type="submit" class="button-small">Cerrar</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p class="muted">No hay cursos registrados todavía.</p>
+    {% endif %}
+</div>
+{% endblock %}

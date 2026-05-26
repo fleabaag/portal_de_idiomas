@@ -63,4 +63,38 @@
         <p class="muted">No hay cursos publicados todavía. Vuelve más tarde.</p>
     {% endif %}
 </div>
+
+<div class="card">
+    <h2>Mis cursos inscritos</h2>
+    <p class="muted">Cursos en los que ya estás inscrito y desde donde puedes consultar materiales.</p>
+
+    {% if cursos_inscritos %}
+        <table>
+            <tr>
+                <th>Idioma</th>
+                <th>Nivel</th>
+                <th>Periodo</th>
+                <th>Año</th>
+                <th>Profesor</th>
+                <th>Materiales</th>
+                <th>Acciones</th>
+            </tr>
+            {% for curso in cursos_inscritos %}
+            <tr>
+                <td>{{ curso.idioma.nombre_idioma }}</td>
+                <td>{{ curso.nivel.value }}</td>
+                <td>{{ curso.periodo.value }}</td>
+                <td>{{ curso.anio }}</td>
+                <td>{{ curso.profesor.nombre_completo }}</td>
+                <td>{{ curso.materiales|length }}</td>
+                <td class="actions-cell">
+                    <a href="{{ url_for('alumno.curso_detalle', id_curso=curso.id_curso) }}" class="button-link">Ver materiales</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="muted">Todavía no tienes cursos inscritos.</p>
+    {% endif %}
+</div>
 {% endblock %}
