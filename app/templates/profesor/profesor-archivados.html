@@ -1,0 +1,69 @@
+{% extends "dashboard-base.html" %}
+
+{% block title %}
+Archivados - Profesor Dashboard
+{% endblock %}
+
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
+
+{% block sidebar_initials %}
+{% if current_user.apellido_paterno and current_user.apellido_materno %}
+{{ (current_user.apellido_paterno[0] + current_user.apellido_materno[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{{ url_for('profesor.dashboard') }}" class="sidebar-link">
+    <span class="sidebar-icon">📚</span>
+    <span class="sidebar-text">Mis cursos</span>
+</a>
+<a href="{{ url_for('profesor.borradores') }}" class="sidebar-link">
+    <span class="sidebar-icon">📝</span>
+    <span class="sidebar-text">Borradores</span>
+</a>
+<a href="{{ url_for('profesor.archivados') }}" class="sidebar-link active">
+    <span class="sidebar-icon">📦</span>
+    <span class="sidebar-text">Archivados</span>
+</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('profesor.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<span>Archivados</span>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{% if cursos_archivados %}
+<div class="courses-section">
+    <div class="section-header">
+        <h2>Cursos Archivados</h2>
+    </div>
+    
+    <div class="dashboard-grid">
+        {% for curso in cursos_archivados %}
+        <div class="dashboard-card course-card archived-card">
+            <div class="archived-badge">Archivado</div>
+            <div class="course-info">
+                <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
+                <p class="course-period">{{ curso.periodo.value }} {{ curso.anio }}</p>
+            </div>
+            <div class="course-actions">
+                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}" class="btn-link">Ver</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No tienes cursos archivados. <a href="{{ url_for('profesor.dashboard') }}">Volver a mis cursos</a></p>
+</div>
+{% endif %}
+
+{% endblock %}

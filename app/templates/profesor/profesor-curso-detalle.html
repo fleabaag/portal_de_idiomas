@@ -1,99 +1,521 @@
-{% extends "base.html" %}
+{% extends "dashboard-base.html" %}
 
-{% block navbar %}
-<div class="navbar">
-    <h1>Detalle de Curso</h1>
-    <div>
-        <a href="{{ url_for('profesor.dashboard') }}">Volver a mis cursos</a>
-        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
-    </div>
-</div>
+{% block title %}
+Detalle de Curso - Profesor
 {% endblock %}
 
-{% block content %}
-<div class="card">
-    <h2>{{ curso.idioma.nombre_idioma }} - {{ curso.nivel.value }}</h2>
-    <p class="muted">Información general del curso.</p>
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div class="flash-alert alert {{ category }}">
-                {{ message }}
+{% block sidebar_initials %}
+{% if current_user.apellido_paterno and current_user.apellido_materno %}
+{{ (current_user.apellido_paterno[0] + current_user.apellido_materno[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{{ url_for('profesor.dashboard') }}" class="sidebar-link">
+    <span class="sidebar-icon">📚</span>
+    <span class="sidebar-text">Mis cursos</span>
+</a>
+<a href="{{ url_for('profesor.borradores') }}" class="sidebar-link">
+    <span class="sidebar-icon">📝</span>
+    <span class="sidebar-text">Borradores</span>
+</a>
+<a href="{{ url_for('profesor.archivados') }}" class="sidebar-link">
+    <span class="sidebar-icon">📦</span>
+    <span class="sidebar-text">Archivados</span>
+</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('profesor.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<a href="{{ url_for('profesor.dashboard') }}">Mis cursos</a>
+<span class="breadcrumb-separator">/</span>
+<span>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</span>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- HEADER CON INFORMACIÓN GENERAL -->
+<div class="course-detail-header">
+    <div class="course-header-top">
+        <div class="course-title-section">
+            <h1>{{ curso.idioma.nombre_idioma }}</h1>
+            <p class="course-level">{{ curso.nivel.value }}</p>
+            <div class="course-meta">
+                <span class="meta-item">
+                    <strong>Período:</strong> {{ curso.periodo.value }} {{ curso.anio }}
+                </span>
+                <span class="meta-item">
+                    <strong>Estado:</strong>
+                    {% if curso.estado.name == 'PUBLICADO' %}
+                    <span class="badge badge-success">Publicado</span>
+                    {% elif curso.estado.name == 'BORRADOR' %}
+                    <span class="badge badge-warning">Borrador</span>
+                    {% else %}
+                    <span class="badge badge-secondary">Archivado</span>
+                    {% endif %}
+                </span>
             </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+        </div>
+        <div class="course-header-actions">
+            {% if curso.estado.name != 'CERRADO' %}
+            <button id="toggle-edit-course" class="btn-action btn-edit">✏️ Editar curso</button>
+            {% endif %}
 
-    <table>
-        <tr><th>Campo</th><th>Valor</th></tr>
-        <tr><td>ID</td><td>{{ curso.id_curso }}</td></tr>
-        <tr><td>Idioma</td><td>{{ curso.idioma.nombre_idioma }}</td></tr>
-        <tr><td>Nivel</td><td>{{ curso.nivel.value }}</td></tr>
-        <tr><td>Periodo</td><td>{{ curso.periodo.value }} {{ curso.anio }}</td></tr>
-        <tr><td>Estado</td><td>{{ curso.estado.value }}</td></tr>
-        <tr><td>Descripción</td><td>{{ curso.descripcion_curso or 'Sin descripción' }}</td></tr>
-        <tr><td>Horarios registrados</td><td>{{ curso.horario|length }}</td></tr>
-        <tr><td>Materiales registrados</td><td>{{ curso.materiales|length }}</td></tr>
-    </table>
+            {% if curso.estado.name == 'BORRADOR' %}
+            <form method="POST" action="{{ url_for('profesor.publicar_curso', id_curso=curso.id_curso) }}"
+                class="inline-form">
+                <button type="submit" class="btn-action btn-publish">📤 Publicar</button>
+            </form>
+            {% endif %}
+
+            {% if curso.estado.name == 'PUBLICADO' %}
+            <form method="POST" action="{{ url_for('profesor.archivar_curso', id_curso=curso.id_curso) }}"
+                class="inline-form"
+                onsubmit="return confirm('¿Estás seguro de que deseas archivar este curso? Esta acción no se puede deshacer.')">
+                <button type="submit" class="btn-action btn-archive">📦 Archivar</button>
+            </form>
+            {% endif %}
+
+            {% if curso.estado.name == 'BORRADOR' or curso.estado.name == 'CERRADO' %}
+            <form method="POST" action="{{ url_for('profesor.eliminar_curso', id_curso=curso.id_curso) }}"
+                class="inline-form"
+                onsubmit="return confirm('¿Estás seguro de que deseas eliminar este curso? No se puede deshacer.')">
+                <button type="submit" class="btn-action btn-delete">🗑️ Eliminar</button>
+            </form>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<!-- Mensajes -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="flash-alert {{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<!-- FORMULARIO DE EDICIÓN (EMBED) -->
+{% if curso.estado != "cerrado" %}
+<form id="edit-course-form" method="POST" action="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}"
+    style="display:none;">
+    <div class="course-section">
+        <h3>Editar curso</h3>
+
+        {% if curso.estado.name == 'PUBLICADO' %}
+        <div class="info-box" style="background-color: #e3f2fd; border-left: 4px solid #2196F3; margin-bottom: 1.5rem;">
+            <p><strong>ℹ️ Curso publicado:</strong> Cuando un curso está publicado, solo puedes editar la descripción y
+                los horarios. Los campos de idioma, año, nivel y período están bloqueados.</p>
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_idioma">Idioma *</label>
+                <select name="id_idioma" id="id_idioma" {% if curso.estado.name=='PUBLICADO' %}disabled{% endif %}
+                    required>
+                    <option value="">Selecciona un idioma</option>
+                    {% for idioma in curso.idioma.__class__.query.order_by(curso.idioma.__class__.nombre_idioma).all()
+                    %}
+                    <option value="{{ idioma.id_idioma }}" {% if idioma.id_idioma==curso.id_idioma %}selected{% endif
+                        %}>{{ idioma.nombre_idioma }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="anio">Año *</label>
+                <input type="number" name="anio" id="anio" min="2000" max="2100" value="{{ curso.anio }}" {% if
+                    curso.estado.name=='PUBLICADO' %}disabled{% endif %} required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nivel">Nivel *</label>
+                <select name="nivel" id="nivel" {% if curso.estado.name=='PUBLICADO' %}disabled{% endif %} required>
+                    <option value="">Selecciona un nivel</option>
+                    {% for nivel in Niveles %}
+                    <option value="{{ nivel.name }}" {% if nivel==curso.nivel %}selected{% endif %}>{{ nivel.value }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="periodo">Periodo *</label>
+                <select name="periodo" id="periodo" {% if curso.estado.name=='PUBLICADO' %}disabled{% endif %} required>
+                    <option value="">Selecciona un periodo</option>
+                    {% for periodo in PeriodoEnum %}
+                    <option value="{{ periodo.name }}" {% if periodo==curso.periodo %}selected{% endif %}>{{
+                        periodo.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group full-width">
+            <label for="descripcion_curso">Descripción</label>
+            <textarea name="descripcion_curso" id="descripcion_curso" rows="4"
+                placeholder="Descripción del curso">{{ curso.descripcion_curso or '' }}</textarea>
+        </div>
+    </div>
+
+    <!-- Horarios (se permiten editar en BORRADOR y PUBLICADO) -->
+    <div class="course-section">
+        <div class="section-header-modal">
+            <h3>Horarios</h3>
+            <button type="button" id="btn-add-schedule" class="btn-add-schedule">+ Agregar horario</button>
+        </div>
+
+        <div id="horarios-container">
+            {# Renderizar grupos preexistentes pasados por controller #}
+            <script>
+                window.initialHorarios = JSON.parse('{{ horarios_grouped | tojson | safe }}');
+
+                window.scheduleConfig = {
+                    formId: "edit-course-form",
+                    containerId: "horarios-container",
+                    maxHorarios: 3
+                };
+            </script>
+        </div>
+
+        <p class="form-info">Máximo 3 horarios. Días: lunes a sábado. Inicio debe ser anterior a término.</p>
+    </div>
+
+    <div style="display:flex;gap:1rem;justify-content:flex-end;margin-bottom:2rem;">
+        <button type="button" id="cancel-edit" class="btn-secondary">Cancelar</button>
+        <button type="submit" id="save-edit" class="btn-primary">Guardar cambios</button>
+    </div>
+</form>
+{% else %}
+<div class="info-box">
+    <p>Este curso está archivado y no se puede editar.</p>
+</div>
+{% endif %}
+
+<!-- SECCIÓN DE INFORMACIÓN -->
+<div class="course-section info-section">
+    <div class="section-header-detail">
+        <h2>📋 Información</h2>
+    </div>
+    <div class="info-grid">
+        <div class="info-item">
+            <label>Idioma</label>
+            <p>{{ curso.idioma.nombre_idioma }}</p>
+        </div>
+        <div class="info-item">
+            <label>Nivel</label>
+            <p>{{ curso.nivel.value }}</p>
+        </div>
+        <div class="info-item">
+            <label>Período</label>
+            <p>{{ curso.periodo.value }} {{ curso.anio }}</p>
+        </div>
+        <div class="info-item">
+            <label>Estado</label>
+            <p>{{ curso.estado.value }}</p>
+        </div>
+    </div>
+
+    {% if curso.descripcion_curso %}
+    <div class="description-box">
+        <label>Descripción del curso:</label>
+        <p>{{ curso.descripcion_curso }}</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- SECCIÓN DE HORARIOS -->
+<div class="course-section schedules-section">
+    <div class="section-header-detail">
+        <h2>🕐 Horarios:</h2>
+    </div>
+
+    {% if curso.horario %}
+    {{ render_schedule_groups(horarios_grouped) }}
+    {% else %}
+    <p class="text-muted">No hay horarios registrados para este curso.</p>
+    {% endif %}
+</div>
+
+<!-- SECCIÓN DE MATERIAL DEL CURSO -->
+<div class="course-section materials-section">
+    <div class="section-header-detail">
+        <h2>📚 Material del curso</h2>
+        {% if curso.estado.name == 'PUBLICADO' %}
+        <button class="btn-add-material" id="btn-add-material">+ Agregar material</button>
+        {% endif %}
+    </div>
 
     {% if curso.estado.name == 'BORRADOR' %}
-        <form method="POST" action="{{ url_for('profesor.publicar_curso', id_curso=curso.id_curso) }}" class="inline-form mt-16">
-            <button type="submit" class="button-small">Publicar curso</button>
-        </form>
-        <p class="muted mt-16">Solo puedes subir materiales cuando el curso está publicado.</p>
-    {% else %}
-        <div class="material-upload-section">
-            <h3>Subir material</h3>
-            <p class="muted">Archivos permitidos: PDF, Word, Excel, PowerPoint, texto y formatos comunes de documento.</p>
-            <form method="POST" action="{{ url_for('profesor.subir_material', id_curso=curso.id_curso) }}" enctype="multipart/form-data" class="material-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="titulo_material">Título</label>
-                        <input type="text" name="titulo_material" id="titulo_material" placeholder="Ej. Guía de la unidad 1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="archivo_material">Archivo</label>
-                        <input type="file" name="archivo_material" id="archivo_material" required>
-                    </div>
-                </div>
-                <button type="submit">Subir material</button>
-            </form>
-        </div>
+    <div class="info-box">
+        <p>⚠️ Solo puedes subir materiales cuando el curso está publicado.</p>
+    </div>
     {% endif %}
-</div>
-
-<div class="card">
-    <h2>Materiales del curso</h2>
-    <p class="muted">Archivos cargados por el profesor para este curso.</p>
 
     {% if curso.materiales %}
+    <div class="materials-table">
         <table>
-            <tr>
-                <th>Título</th>
-                <th>Tipo</th>
-                <th>Archivo</th>
-                <th>Acciones</th>
-            </tr>
-            {% for material in curso.materiales %}
-            <tr>
-                <td>{{ material.titulo }}</td>
-                <td>{{ material.tipo_archivo|upper if material.tipo_archivo else 'Documento' }}</td>
-                <td><a href="{{ material.url_archivo }}" class="button-link">Descargar</a></td>
-                <td class="actions-cell">
-                    <a href="{{ url_for('profesor.actualizar_material', id_material=material.id_material) }}" class="button-link">Editar</a>
-                    <form method="POST"
-                             action="{{ url_for('profesor.eliminar_material', id_material=material.id_material) }}"
-                                class="inline-form"
-                                onsubmit="return confirm('¿Eliminar el material &quot;{{ material.titulo }}&quot;?');">
-                        <button type="submit" class="button-small button-danger">Eliminar</button>
-                    </form>
-            </td>
-            </tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material in curso.materiales %}
+                <tr>
+                    <td class="material-title">{{ material.titulo }}</td>
+                    <td class="material-type">
+                        <span class="badge badge-type">{{ material.tipo_archivo|upper }}</span>
+                    </td>
+                    <td class="material-actions">
+                        <a href="{{ material.url_archivo }}" class="btn-icon btn-download" title="Descargar">⬇️</a>
+                        <a href="{{ url_for('profesor.actualizar_material', id_material=material.id_material) }}"
+                            class="btn-icon btn-edit" title="Editar">✏️</a>
+                        <form method="POST"
+                            action="{{ url_for('profesor.eliminar_material', id_material=material.id_material) }}"
+                            class="inline-form"
+                            onsubmit="return confirm('¿Eliminar el material &quot;{{ material.titulo }}&quot;?');">
+                            <button type="submit" class="btn-icon btn-delete" title="Eliminar">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
+    </div>
     {% else %}
-        <p class="muted">Aún no se han subido materiales para este curso.</p>
+    <p class="text-muted">Aún no se han subido materiales para este curso.</p>
     {% endif %}
 </div>
+
+<!-- SECCIÓN DE ALUMNOS Y CALIFICACIONES -->
+<div class="course-section students-section">
+    <div class="section-header-detail">
+        <h2>👥 Alumnos</h2>
+        <span class="student-count">Total: {{ curso.inscripciones|length }}</span>
+    </div>
+
+    {% if curso.inscripciones %}
+    <div class="students-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Calificación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inscripcion in curso.inscripciones %}
+                <tr>
+                    <td class="student-name">{{ inscripcion.alumno.nombre_completo }}</td>
+                    <td class="student-email">{{ inscripcion.alumno.email }}</td>
+                    <td class="student-grade">
+                        {% if inscripcion.calificacion is not none %}
+                        <span class="grade-badge">{{ inscripcion.calificacion }}</span>
+                        {% else %}
+                        <span class="grade-empty">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="student-actions">
+                        {% if curso.estado.name == 'PUBLICADO' %}
+                        <button class="btn-update-grade" data-alumno-id="{{ inscripcion.id_alumno }}"
+                            data-alumno-nombre="{{ inscripcion.alumno.nombre_completo }}"
+                            data-alumno-email="{{ inscripcion.alumno.email }}"
+                            data-calificacion="{{ inscripcion.calificacion or '' }}">
+                            ✏️ Actualizar
+                        </button>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No hay alumnos inscritos en este curso aún.</p>
+    {% endif %}
+</div>
+
+<!-- MODAL PARA AGREGAR MATERIAL -->
+<div class="modal" id="modal-add-material">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Agregar material al curso</h3>
+            <button type="button" class="modal-close">&times;</button>
+        </div>
+        <form method="POST" action="{{ url_for('profesor.subir_material', id_curso=curso.id_curso) }}"
+            enctype="multipart/form-data" class="modal-form">
+            <div class="form-group">
+                <label for="titulo_material">Título *</label>
+                <input type="text" name="titulo_material" id="titulo_material" placeholder="Ej. Guía de la unidad 1"
+                    required>
+            </div>
+            <div class="form-group">
+                <label for="archivo_material">Archivo *</label>
+                <input type="file" name="archivo_material" id="archivo_material" required>
+                <p class="form-help">Formatos: PDF, Word, Excel, PowerPoint, texto y documentos comunes</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary modal-close-btn">Cancelar</button>
+                <button type="submit" class="btn-primary">Agregar material</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL PARA ACTUALIZAR CALIFICACIÓN -->
+<div class="modal" id="modal-update-grade">
+    <div class="modal-content modal-small">
+        <div class="modal-header">
+            <h3>Actualizar calificación</h3>
+            <button type="button" class="modal-close">&times;</button>
+        </div>
+        <form method="POST" action="{{ url_for('profesor.actualizar_calificacion_curso', id_curso=curso.id_curso) }}"
+            class="modal-form">
+            <div class="student-info-box">
+                <p><strong>Nombre:</strong> <span id="modal-alumno-nombre"></span></p>
+                <p><strong>Correo:</strong> <span id="modal-alumno-email"></span></p>
+            </div>
+            <input type="hidden" name="id_alumno" id="modal-id-alumno">
+            <div class="form-group">
+                <label for="modal-calificacion">Calificación (0.0 - 10.0) *</label>
+                <input type="number" name="calificacion" id="modal-calificacion" min="0" max="10" step="0.1"
+                    placeholder="7.5" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary modal-close-btn">Cancelar</button>
+                <button type="submit" class="btn-primary">Guardar calificación</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // ========== GESTIÓN DE MODALES ==========
+        // Funciones genéricas para abrir/cerrar modales
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Modal de agregar material
+        const btnAddMaterial = document.getElementById('btn-add-material');
+        const modalAddMaterial = document.getElementById('modal-add-material');
+
+        if (btnAddMaterial) {
+            btnAddMaterial.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal('modal-add-material');
+            });
+        }
+
+        // Cerrar modal de agregar material
+        if (modalAddMaterial) {
+            const closeButtons = modalAddMaterial.querySelectorAll('.modal-close, .modal-close-btn');
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeModal('modal-add-material');
+                    // Limpiar el formulario
+                    const form = modalAddMaterial.querySelector('.modal-form');
+                    if (form) form.reset();
+                });
+            });
+
+            // Cerrar al hacer clic fuera del modal
+            modalAddMaterial.addEventListener('click', (e) => {
+                if (e.target === modalAddMaterial) {
+                    closeModal('modal-add-material');
+                    const form = modalAddMaterial.querySelector('.modal-form');
+                    if (form) form.reset();
+                }
+            });
+        }
+
+        // Modal de actualizar calificación
+        const modalUpdateGrade = document.getElementById('modal-update-grade');
+        const updateGradeButtons = document.querySelectorAll('.btn-update-grade');
+
+        updateGradeButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const alumnoId = btn.getAttribute('data-alumno-id');
+                const alumnoNombre = btn.getAttribute('data-alumno-nombre');
+                const alumnoEmail = btn.getAttribute('data-alumno-email');
+                const calificacion = btn.getAttribute('data-calificacion');
+
+                document.getElementById('modal-id-alumno').value = alumnoId;
+                document.getElementById('modal-alumno-nombre').textContent = alumnoNombre;
+                document.getElementById('modal-alumno-email').textContent = alumnoEmail;
+                document.getElementById('modal-calificacion').value = calificacion;
+
+                openModal('modal-update-grade');
+            });
+        });
+
+        if (modalUpdateGrade) {
+            const closeButtons = modalUpdateGrade.querySelectorAll('.modal-close, .modal-close-btn');
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeModal('modal-update-grade');
+                });
+            });
+
+            // Cerrar al hacer clic fuera del modal
+            modalUpdateGrade.addEventListener('click', (e) => {
+                if (e.target === modalUpdateGrade) {
+                    closeModal('modal-update-grade');
+                }
+            });
+        }
+
+        // Toggle mostrar/ocultar formulario de edición
+        const toggleBtn = document.getElementById('toggle-edit-course');
+        const form = document.getElementById('edit-course-form');
+        const cancelBtn = document.getElementById('cancel-edit');
+        if (toggleBtn && form) {
+            toggleBtn.addEventListener('click', () => { form.style.display = form.style.display === 'none' ? 'block' : 'none'; window.scrollTo({ top: form.offsetTop - 20, behavior: 'smooth' }); });
+        }
+        if (cancelBtn && form) {
+            cancelBtn.addEventListener('click', () => { form.style.display = 'none'; });
+        }
+
+
+
+    })();
+</script>
+
+
+
+
+<script src="{{ url_for('static', filename='js/schedule-manager.js') }}"></script>
 {% endblock %}

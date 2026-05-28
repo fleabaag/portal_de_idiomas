@@ -2,9 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user
 import re
 
-from app.models.Usuario import Usuario
-from app.models.Alumno import Alumno
-from app.models.enums import RolUsuario
+from app.models import Usuario, Alumno, RolUsuario
 from app.extensions import db
 
 auth_bp = Blueprint("auth", __name__)

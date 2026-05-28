@@ -1,45 +1,119 @@
-{% extends "base.html" %}
+{% extends "dashboard-base.html" %}
 
-{% block navbar %}
-<div class="navbar">
-    <h1>Editar Material</h1>
-    <div>
-        <a href="{{ url_for('profesor.curso_detalle', id_curso=material.id_curso) }}">Volver al curso</a>
-        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
-    </div>
-</div>
+{% block title %}
+Editar Material - Profesor
 {% endblock %}
 
-{% block content %}
-<div class="card" style="max-width: 600px; margin: 2rem auto;">
-    <h2>Editar material</h2>
-    <p class="muted">Cambia el título o reemplaza el archivo. Si dejas el archivo vacío, se conserva el actual.</p>
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div class="flash-alert alert {{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+{% block sidebar_initials %}
+{% if current_user.apellido_paterno and current_user.apellido_materno %}
+{{ (current_user.apellido_paterno[0] + current_user.apellido_materno[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
 
-    <table>
-        <tr><td><strong>Título actual:</strong></td><td>{{ material.titulo }}</td></tr>
-        <tr><td><strong>Tipo actual:</strong></td><td>{{ material.tipo_archivo|upper }}</td></tr>
-        <tr><td><strong>Archivo:</strong></td><td><a href="{{ material.url_archivo }}" class="button-link">Descargar actual</a></td></tr>
-    </table>
+{% block sidebar_nav %}
+<a href="{{ url_for('profesor.dashboard') }}" class="sidebar-link">
+    <span class="sidebar-icon">📚</span>
+    <span class="sidebar-text">Mis cursos</span>
+</a>
+<a href="{{ url_for('profesor.borradores') }}" class="sidebar-link">
+    <span class="sidebar-icon">📝</span>
+    <span class="sidebar-text">Borradores</span>
+</a>
+<a href="{{ url_for('profesor.archivados') }}" class="sidebar-link">
+    <span class="sidebar-icon">📦</span>
+    <span class="sidebar-text">Archivados</span>
+</a>
+{% endblock %}
 
-    <form method="POST" enctype="multipart/form-data" class="material-form mt-16">
-        <div class="form-group">
-            <label for="titulo_material">Nuevo título</label>
-            <input type="text" name="titulo_material" id="titulo_material" value="{{ material.titulo }}" required>
+{% block breadcrumbs %}
+<a href="{{ url_for('profesor.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<a href="{{ url_for('profesor.curso_detalle', id_curso=material.id_curso) }}">{{ material.curso.idioma.nombre_idioma }} {{ material.curso.nivel.value }}</a>
+<span class="breadcrumb-separator">/</span>
+<span>Editar Material</span>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- HEADER -->
+<div class="course-detail-header">
+    <div class="course-header-top">
+        <div class="course-title-section">
+            <h1>Editar Material</h1>
+            <p class="course-level">{{ material.titulo }}</p>
         </div>
-        <div class="form-group">
-            <label for="archivo_material">Reemplazar archivo (opcional)</label>
-            <input type="file" name="archivo_material" id="archivo_material">
-            <p class="muted">Deja vacío si solo quieres cambiar el título.</p>
+        <div class="course-header-actions">
+            <a href="{{ url_for('profesor.curso_detalle', id_curso=material.id_curso) }}" class="btn-action btn-secondary">
+                ← Volver al curso
+            </a>
         </div>
-        <button type="submit">Guardar cambios</button>
+    </div>
+</div>
+
+<!-- Mensajes -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-alert {{ category }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+
+<!-- SECCIÓN DE INFORMACIÓN ACTUAL -->
+<div class="course-section info-section">
+    <div class="section-header-detail">
+        <h2>📋 Información actual del material</h2>
+    </div>
+    <div class="info-grid">
+        <div class="info-item">
+            <label>Título</label>
+            <p>{{ material.titulo }}</p>
+        </div>
+        <div class="info-item">
+            <label>Tipo</label>
+            <p><span class="badge badge-type">{{ material.tipo_archivo|upper }}</span></p>
+        </div>
+        <div class="info-item">
+            <label>Archivo</label>
+            <p><a href="{{ material.url_archivo }}" class="btn-icon btn-download" title="Descargar">⬇️ Descargar</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- FORMULARIO DE EDICIÓN -->
+<div class="course-section">
+    <div class="section-header-detail">
+        <h2>✏️ Editar material</h2>
+    </div>
+    <p style="color: #666; margin-bottom: 1.5rem;">Cambia el título o reemplaza el archivo. Si dejas el archivo vacío, se conserva el actual.</p>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-row">
+            <div class="form-group full-width">
+                <label for="titulo_material">Nuevo título *</label>
+                <input type="text" name="titulo_material" id="titulo_material" value="{{ material.titulo }}" placeholder="Ej. Guía de la unidad 1" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group full-width">
+                <label for="archivo_material">Reemplazar archivo (opcional)</label>
+                <input type="file" name="archivo_material" id="archivo_material">
+                <p class="form-help">Deja vacío si solo quieres cambiar el título. Formatos: PDF, Word, Excel, PowerPoint, texto y documentos comunes</p>
+            </div>
+        </div>
+
+        <div style="display:flex;gap:1rem;justify-content:flex-end;">
+            <a href="{{ url_for('profesor.curso_detalle', id_curso=material.id_curso) }}" class="btn-secondary">Cancelar</a>
+            <button type="submit" class="btn-primary">Guardar cambios</button>
+        </div>
     </form>
 </div>
+
 {% endblock %}

@@ -1,0 +1,160 @@
+{% extends "dashboard-base.html" %}
+
+{% block title %}
+Detalle del Curso
+{% endblock %}
+
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
+
+{% block sidebar_initials %}
+{{ current_user.nombre[0]|upper }}
+{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{{ url_for('alumno.dashboard') }}" class="sidebar-link">
+    <span class="sidebar-icon">📚</span>
+    <span class="sidebar-text">Inscribir cursos</span>
+</a>
+
+<a href="{{ url_for('alumno.cursos_inscritos') }}" class="sidebar-link">
+    <span class="sidebar-icon">🎓</span>
+    <span class="sidebar-text">Cursos inscritos</span>
+</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('alumno.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<span>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</span>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="course-detail-header">
+    <div class="course-title-section">
+        <h1>{{ curso.idioma.nombre_idioma }}</h1>
+        <p class="course-level">{{ curso.nivel.value }}</p>
+
+        <div class="course-meta">
+            <span><strong>Periodo:</strong> {{ curso.periodo.value }} {{ curso.anio }}</span>
+        </div>
+    </div>
+
+    <div class="course-header-actions">
+        {% if not inscrito %}
+        <form method="POST"
+              action="{{ url_for('alumno.inscribir_curso', id_curso=curso.id_curso) }}"
+              onsubmit="return confirm('¿Confirmar inscripción?')">
+            <button type="submit" class="btn-action btn-publish">
+                Inscribirme
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<!-- INFORMACIÓN -->
+<div class="course-section">
+    <h2>📋 Información general</h2>
+
+    <div class="info-grid">
+        <div class="info-item">
+            <label>Idioma</label>
+            <p>{{ curso.idioma.nombre_idioma }}</p>
+        </div>
+
+        <div class="info-item">
+            <label>Nivel</label>
+            <p>{{ curso.nivel.value }}</p>
+        </div>
+
+        <div class="info-item">
+            <label>Profesor</label>
+            <p>{{ curso.profesor.nombre }}</p>
+        </div>
+
+        <div class="info-item">
+            <label>Correo</label>
+            <p>{{ curso.profesor.email }}</p>
+        </div>
+    </div>
+
+    {% if curso.descripcion_curso %}
+    <div class="description-box">
+        <p>{{ curso.descripcion_curso }}</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- HORARIOS -->
+<div class="course-section">
+    <h2>🕐 Horarios</h2>
+
+    {% if horarios_grouped %}
+        {{ render_schedule_groups(horarios_grouped) }}
+    {% else %}
+        <p class="text-muted">No hay horarios registrados.</p>
+    {% endif %}
+</div>
+
+<!-- CONTENIDO BLOQUEADO -->
+{% if not inscrito %}
+<div class="course-section">
+    <div class="info-box">
+        <p>
+            🔒 Inscríbete para acceder a materiales y consultar tu calificación.
+        </p>
+    </div>
+</div>
+{% endif %}
+
+<!-- MATERIALES -->
+{% if inscrito %}
+<div class="course-section">
+    <h2>📚 Material del curso</h2>
+
+    {% if curso.materiales %}
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Descarga</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in curso.materiales %}
+            <tr>
+                <td>{{ material.titulo }}</td>
+                <td>{{ material.tipo_archivo|upper }}</td>
+                <td>
+                    <a href="{{ material.url_archivo }}" class="btn-link">
+                        Descargar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">No hay materiales disponibles.</p>
+    {% endif %}
+</div>
+
+<!-- CALIFICACIÓN -->
+<div class="course-section">
+    <h2>📊 Mi calificación</h2>
+
+    {% if inscripcion.calificacion is not none %}
+        <div class="grade-badge">
+            {{ inscripcion.calificacion }}
+        </div>
+    {% else %}
+        <p class="text-muted">Aún no hay calificación registrada.</p>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

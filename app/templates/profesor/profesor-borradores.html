@@ -1,0 +1,151 @@
+{% extends "dashboard-base.html" %}
+
+{% block title %}
+Borradores - Profesor Dashboard
+{% endblock %}
+
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
+
+{% block sidebar_initials %}
+{% if current_user.apellido_paterno and current_user.apellido_materno %}
+{{ (current_user.apellido_paterno[0] + current_user.apellido_materno[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{{ url_for('profesor.dashboard') }}" class="sidebar-link">
+    <span class="sidebar-icon">📚</span>
+    <span class="sidebar-text">Mis cursos</span>
+</a>
+<a href="{{ url_for('profesor.borradores') }}" class="sidebar-link active">
+    <span class="sidebar-icon">📝</span>
+    <span class="sidebar-text">Borradores</span>
+</a>
+<a href="{{ url_for('profesor.archivados') }}" class="sidebar-link">
+    <span class="sidebar-icon">📦</span>
+    <span class="sidebar-text">Archivados</span>
+</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('profesor.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<span>Borradores</span>
+{% endblock %}
+
+{% block dashboard_content %}
+
+{% if cursos_borrador %}
+<div class="courses-section">
+    <div class="section-header">
+        <h2>Cursos en Borrador</h2>
+        <button class="btn-add-course">+ Agregar curso</button>
+    </div>
+    
+    <div class="dashboard-grid">
+        {% for curso in cursos_borrador %}
+        <div class="dashboard-card course-card draft-card">
+            <div class="draft-badge">Borrador</div>
+            <div class="course-info">
+                <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
+                <p class="course-period">{{ curso.periodo.value }} {{ curso.anio }}</p>
+                <p class="course-status">Pendiente de publicación</p>
+            </div>
+            <div class="course-actions">
+                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}" class="btn-link">Completar</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No tienes cursos en borrador. <a href="{{ url_for('profesor.dashboard') }}">Volver a mis cursos</a></p>
+</div>
+{% endif %}
+
+<!-- Modal crear curso -->
+<div class="modal" id="modal-crear-curso">
+    <div class="modal-content curso-modal">
+        <div class="modal-header">
+            <h2>Crear nuevo curso</h2>
+            <button type="button" class="modal-close">&times;</button>
+        </div>
+        
+        <form method="POST" action="{{ url_for('profesor.dashboard') }}" class="modal-form">
+            <div class="form-section">
+                <h3>Información general del curso</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_idioma">Idioma *</label>
+                        <select name="id_idioma" id="id_idioma" required>
+                            <option value="">Selecciona un idioma</option>
+                            {% for idioma in idiomas %}
+                            <option value="{{ idioma.id_idioma }}">{{ idioma.nombre_idioma }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="anio">Año *</label>
+                        <input type="number" name="anio" id="anio" min="2000" max="2100" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nivel">Nivel *</label>
+                        <select name="nivel" id="nivel" required>
+                            <option value="">Selecciona un nivel</option>
+                            {% for nivel in niveles %}
+                            <option value="{{ nivel.name }}">{{ nivel.value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="periodo">Periodo *</label>
+                        <select name="periodo" id="periodo" required>
+                            <option value="">Selecciona un periodo</option>
+                            {% for periodo in periodos %}
+                            <option value="{{ periodo.name }}">{{ periodo.value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="descripcion_curso">Descripción del curso</label>
+                    <textarea name="descripcion_curso" id="descripcion_curso" rows="4" placeholder="Información general del curso (opcional)"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary modal-close-btn">Cancelar</button>
+                <button type="submit" class="btn-primary">Crear curso</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const btnAdd = document.querySelector(".btn-add-course");
+    const modal = document.getElementById("modal-crear-curso");
+    const closeBtn = document.querySelector(".modal-close");
+    const cancelBtn = document.querySelector(".modal-close-btn");
+
+    if (btnAdd) btnAdd.addEventListener("click", () => { modal.style.display = "flex"; });
+    if (closeBtn) closeBtn.addEventListener("click", () => { modal.style.display = "none"; });
+    if (cancelBtn) cancelBtn.addEventListener("click", () => { modal.style.display = "none"; });
+
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) modal.style.display = "none";
+    });
+</script>
+
+{% endblock %}
