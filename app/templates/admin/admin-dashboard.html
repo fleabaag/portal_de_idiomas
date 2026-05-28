@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-
 {% block navbar %}
 <div class="navbar">
     <h1>Panel del Administrador</h1>
     <div>
         <a href="{{ url_for('admin.dashboard') }}">Idiomas</a>
+        <a href="{{ url_for('admin.cursos') }}">Cursos</a>
         <a href="{{ url_for('admin.profesores') }}">Profesores</a>
         <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
     </div>
