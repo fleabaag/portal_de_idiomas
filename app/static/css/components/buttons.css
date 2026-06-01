@@ -22,6 +22,7 @@
 
     appearance: none;
     -webkit-appearance: none;
+    transition: var(--transition);
 }
 
 .btn-primary {
@@ -33,3 +34,34 @@
     background: var(--color-accent);
     color: var(--color-text-dark);
 }
+
+
+/* .btn-primary {
+    background: #5c5c3c;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    background: #484829;
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: var(--color-header-text);
+    border: 1px solid #e0e0e0;
+    padding: 10px 24px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-secondary:hover {
+    background: #e8e8e8;
+} */

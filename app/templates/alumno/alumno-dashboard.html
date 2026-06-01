@@ -13,13 +13,13 @@ Dashboard Alumno
 {% endblock %}
 
 {% block sidebar_nav %}
-<a href="{{ url_for('alumno.dashboard') }}" class="sidebar-link active">
-    <span class="sidebar-icon">📚</span>
+<a href="{{ url_for('alumno.dashboard') }}" class="sidebar-link active sidebar-inscribir">
+    <span class="sidebar-icon"></span>
     <span class="sidebar-text">Inscribir cursos</span>
 </a>
 
-<a href="{{ url_for('alumno.cursos_inscritos') }}" class="sidebar-link">
-    <span class="sidebar-icon">🎓</span>
+<a href="{{ url_for('alumno.cursos_inscritos') }}" class="sidebar-link sidebar-courses">
+    <span class="sidebar-icon"></span>
     <span class="sidebar-text">Cursos inscritos</span>
 </a>
 {% endblock %}

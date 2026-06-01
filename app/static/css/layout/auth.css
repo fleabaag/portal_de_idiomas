@@ -21,6 +21,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+
 }
 
 .login-panel {
@@ -54,6 +55,23 @@
     top: 0;
     height: 100vh;
     overflow: hidden;
+}
+
+.login-divider {
+    display: flex;
+    align-items: center;
+    margin: 2rem 0;
+    color: var(--color-accent);
+}
+
+.auth-login .login-panel {
+    justify-content: flex-start;
+    overflow-y: auto;
+}
+
+.auth-login .login-card {
+    margin-top: 8vh;
+    padding-bottom: 4rem;
 }
 
 .image-credit {

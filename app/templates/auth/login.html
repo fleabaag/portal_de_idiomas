@@ -6,7 +6,7 @@
 <div class="login-layout auth-login">
 
     <!-- Imagen izquierda -->
-    <div class="login-visual">
+    <div class="login-visual auth-register">
         <img src="{{ url_for('static', filename='img/fondo_login.png') }}" alt="Portal de Idiomas">
         <div class="image-credit">
             Imagen: El Mundo · Remedios Varo (1958)
@@ -33,12 +33,12 @@
 
             <form method="POST">
 
-                <div class="form-group">
+                <div class="form-group-auth ">
                     <label>E-mail</label>
                     <input type="email" name="email" placeholder="Ejemplo: email@unam.mx" required>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group-auth ">
                     <label>Contraseña</label>
 
                     <div class="input-wrapper">

@@ -17,16 +17,16 @@ Dashboard Profesor
 {% endblock %}
 
 {% block sidebar_nav %}
-<a href="{{ url_for('profesor.dashboard') }}" class="sidebar-link active">
-    <span class="sidebar-icon">📚</span>
+<a href="{{ url_for('profesor.dashboard') }}" class="sidebar-link active sidebar-courses">
+    <span class="sidebar-icon"></span>
     <span class="sidebar-text">Mis cursos</span>
 </a>
-<a href="{{ url_for('profesor.borradores') }}" class="sidebar-link">
-    <span class="sidebar-icon">📝</span>
+<a href="{{ url_for('profesor.borradores') }}" class="sidebar-link sidebar-drafts">
+    <span class="sidebar-icon"></span>
     <span class="sidebar-text">Borradores</span>
 </a>
-<a href="{{ url_for('profesor.archivados') }}" class="sidebar-link">
-    <span class="sidebar-icon">📦</span>
+<a href="{{ url_for('profesor.archivados') }}" class="sidebar-link sidebar-archived">
+    <span class="sidebar-icon"></span>
     <span class="sidebar-text">Archivados</span>
 </a>
 {% endblock %}

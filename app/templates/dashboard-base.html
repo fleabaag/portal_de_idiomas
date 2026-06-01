@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
 
@@ -7,8 +8,7 @@
         {% block title %}Portal de Idiomas{% endblock %}
     </title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 
 <body class="dashboard-body">
@@ -18,16 +18,14 @@
 
         <div class="sidebar-header">
 
-            <button class="sidebar-toggle"
-                    id="sidebar-toggle"
-                    aria-label="Minimizar navegación">
-                ☰
+            <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Minimizar navegación">
+                <span class="sidebar-icon sidebar-menu"></span>
             </button>
 
             <div class="sidebar-user-info">
                 <div class="user-avatar">
                     {% block sidebar_initials %}
-                    
+
                     {% endblock %}
                 </div>
                 <h2 class="sidebar-user">
@@ -49,12 +47,12 @@
         <div class="sidebar-footer">
 
             {% block sidebar_footer %}
-            <a href="#" class="sidebar-link">
-                <span class="sidebar-icon">⚙️</span>
+            <a href="#" class="sidebar-link sidebar-settings">
+                <span class="sidebar-icon"></span>
                 <span class="sidebar-text">Configuración</span>
             </a>
-            <a href="{{ url_for('auth.logout') }}" class="sidebar-link">
-                <span class="sidebar-icon">🚪</span>
+            <a href="{{ url_for('auth.logout') }}" class="sidebar-link sidebar-logout">
+                <span class="sidebar-icon"></span>
                 <span class="sidebar-text">Cerrar sesión</span>
             </a>
             {% endblock %}
@@ -94,14 +92,14 @@
         <section class="dashboard-content">
 
             {% with messages =
-                get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash-alert {{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
+            get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-alert {{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
             {% endwith %}
 
             {% block dashboard_content %}
@@ -114,4 +112,5 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 </body>
+
 </html>

@@ -8,12 +8,6 @@
     --color-text-dark: #2b241c;
     --color-danger: #dc2626;
 
-    /* Colores dashboard */
-    --color-sidebar-primary: #5c5c3c;
-    --color-sidebar-secondary: #6b6b47;
-    --color-dashboard-bg: #f5f5f5;
-    --color-card-bg: #ffffff;
-    --color-header-text: #333333;
 
     /* Alerts */
     --alert-success: #6f9f5a;
@@ -46,4 +40,22 @@
 
     /* Transiciones */
     --transition: all .25s ease;
+
+    /* Icons */
+    --icon-courses: url("/static/img/icons/courses.png");
+    --icon-edit-light: url("/static/img/icons/edit-light.png");
+    --icon-edit-dark: url("/static/img/icons/edit-dark.png");
+    --icon-archived: url("/static/img/icons/archived.png");
+    --icon-settings: url("/static/img/icons/settings.png");
+    --icon-user: url("/static/img/icons/user.png");
+    --icon-cloud-download-light: url("/static/img/icons/cloud-download-light.png");
+    --icon-cloud-download-dark: url("/static/img/icons/cloud-download-dark.png");
+    --icon-trash-light: url("/static/img/icons/trash-light.png");
+    --icon-trash-dark: url("/static/img/icons/trash-dark.png");
+    --icon-menu: url("/static/img/icons/menu-burger.png");
+    --icon-settings: url("/static/img/icons/settings.png");
+    --icon-user: url("/static/img/icons/user.png");
+    --icon-back-arrow: url("/static/img/icons/angle-circle-left.png");
+    --icon-inscribir: url("/static/img/icons/lesson.png");
+
 }

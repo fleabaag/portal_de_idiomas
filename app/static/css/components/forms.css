@@ -1,10 +1,15 @@
-.form-group {
+.form-group-auth {
     margin-bottom: 1.5rem;
 }
 
-.form-group label {
+.form-group-auth label {
+    margin-bottom: 1.5rem;
+    color: var(--color-text)
+}
+
+.form-group-auth label {
     display: block;
-    color: var(--color-accent);
+    color: var(--color-text);
     margin-bottom: 1rem;
 }
 

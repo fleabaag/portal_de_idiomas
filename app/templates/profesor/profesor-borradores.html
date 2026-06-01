@@ -17,16 +17,16 @@ Borradores - Profesor Dashboard
 {% endblock %}
 
 {% block sidebar_nav %}
-<a href="{{ url_for('profesor.dashboard') }}" class="sidebar-link">
-    <span class="sidebar-icon">📚</span>
+<a href="{{ url_for('profesor.dashboard') }}" class="sidebar-link sidebar-courses">
+    <span class="sidebar-icon"></span>
     <span class="sidebar-text">Mis cursos</span>
 </a>
-<a href="{{ url_for('profesor.borradores') }}" class="sidebar-link active">
-    <span class="sidebar-icon">📝</span>
+<a href="{{ url_for('profesor.borradores') }}" class="sidebar-link active sidebar-drafts">
+    <span class="sidebar-icon"></span>
     <span class="sidebar-text">Borradores</span>
 </a>
-<a href="{{ url_for('profesor.archivados') }}" class="sidebar-link">
-    <span class="sidebar-icon">📦</span>
+<a href="{{ url_for('profesor.archivados') }}" class="sidebar-link sidebar-archived">
+    <span class="sidebar-icon"></span>
     <span class="sidebar-text">Archivados</span>
 </a>
 {% endblock %}
@@ -45,7 +45,7 @@ Borradores - Profesor Dashboard
         <h2>Cursos en Borrador</h2>
         <button class="btn-add-course">+ Agregar curso</button>
     </div>
-    
+
     <div class="dashboard-grid">
         {% for curso in cursos_borrador %}
         <div class="dashboard-card course-card draft-card">
@@ -56,7 +56,8 @@ Borradores - Profesor Dashboard
                 <p class="course-status">Pendiente de publicación</p>
             </div>
             <div class="course-actions">
-                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}" class="btn-link">Completar</a>
+                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}"
+                    class="btn-link">Completar</a>
             </div>
         </div>
         {% endfor %}
@@ -75,11 +76,11 @@ Borradores - Profesor Dashboard
             <h2>Crear nuevo curso</h2>
             <button type="button" class="modal-close">&times;</button>
         </div>
-        
+
         <form method="POST" action="{{ url_for('profesor.dashboard') }}" class="modal-form">
             <div class="form-section">
                 <h3>Información general del curso</h3>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="id_idioma">Idioma *</label>
@@ -90,7 +91,7 @@ Borradores - Profesor Dashboard
                             {% endfor %}
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="anio">Año *</label>
                         <input type="number" name="anio" id="anio" min="2000" max="2100" required>
@@ -107,7 +108,7 @@ Borradores - Profesor Dashboard
                             {% endfor %}
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="periodo">Periodo *</label>
                         <select name="periodo" id="periodo" required>
@@ -121,7 +122,8 @@ Borradores - Profesor Dashboard
 
                 <div class="form-group full-width">
                     <label for="descripcion_curso">Descripción del curso</label>
-                    <textarea name="descripcion_curso" id="descripcion_curso" rows="4" placeholder="Información general del curso (opcional)"></textarea>
+                    <textarea name="descripcion_curso" id="descripcion_curso" rows="4"
+                        placeholder="Información general del curso (opcional)"></textarea>
                 </div>
             </div>
 

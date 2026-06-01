@@ -32,16 +32,32 @@
 }
 
 .back-link {
-    display: inline-block;
-    margin-top: 1.2rem;
-
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
     color: var(--color-accent);
     text-decoration: none;
-    font-size: .95rem;
+}
 
-    transition: opacity .2s ease;
+.back-link:visited {
+    color: var(--color-accent);
 }
 
 .back-link:hover {
-    opacity: .75;
+    opacity: .8;
+    color: var(--color-accent);
+}
+
+.back-icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.back-image .back-icon {
+    background-image: var(--icon-back-arrow);
 }

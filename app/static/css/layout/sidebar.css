@@ -4,7 +4,7 @@
     top: 0;
     height: 100vh;
     width: var(--sidebar-width);
-    background: linear-gradient(135deg, #5c5c3c 0%, #6b6b47 100%);
+    background: var(--color-panel);
     color: var(--color-text);
     display: flex;
     flex-direction: column;
@@ -19,7 +19,7 @@
 }
 
 .sidebar-header {
-    padding: var(--space-lg);
+    padding: var(--space-md) var(--space-lg);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
@@ -28,15 +28,23 @@
 }
 
 .sidebar-toggle {
-    background: none;
+    background-color: transparent;
     border: none;
     color: var(--color-text);
     font-size: 24px;
     cursor: pointer;
-    padding: var(--space-sm);
+
+    width: 20px;
+    height: 20px;    
+    padding: 0;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
+    transform: translateX(4px);
+
+    flex-shrink: 0;
     border-radius: var(--radius-sm);
     transition: var(--transition);
 }
@@ -111,8 +119,41 @@
 }
 
 .sidebar-icon {
-    font-size: 18px;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     flex-shrink: 0;
+}
+
+.sidebar-courses .sidebar-icon {
+    background-image: var(--icon-courses);
+}
+
+.sidebar-drafts .sidebar-icon {
+    background-image: var(--icon-edit-light);
+}
+
+.sidebar-archived .sidebar-icon {
+    background-image: var(--icon-archived);
+}
+
+.sidebar-settings .sidebar-icon {
+    background-image: var(--icon-settings);
+}
+
+.sidebar-logout .sidebar-icon {
+    background-image: var(--icon-user);
+}
+
+.sidebar-inscribir .sidebar-icon {
+    background-image: var(--icon-inscribir);
+}
+
+.sidebar-menu{
+    background-image: var(--icon-menu);  
 }
 
 .sidebar-text {

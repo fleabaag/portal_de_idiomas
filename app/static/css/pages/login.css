@@ -24,5 +24,13 @@
 }
 
 .auth-login .login-panel {
-    justify-content: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+    height: 100vh;
+    padding-bottom: 4rem;
+}
+
+.login-card {
+    width: 100%;
+    margin: auto 0;
 }
