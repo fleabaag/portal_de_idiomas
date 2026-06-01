@@ -50,46 +50,6 @@
     justify-content: flex-end;
 }
 
-.btn-action {
-    padding: 10px 20px;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
-    transition: var(--transition);
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-}
-
-.btn-edit {
-    background: #3b82f6;
-    color: white;
-}
-
-.btn-edit:hover {
-    background: #2563eb;
-}
-
-.btn-publish {
-    background: #10b981;
-    color: white;
-}
-
-.btn-publish:hover {
-    background: #059669;
-}
-
-.btn-archive {
-    background: #f59e0b;
-    color: white;
-}
-
-.btn-archive:hover {
-    background: #d97706;
-}
-
 /* BADGE */
 .badge {
     display: inline-block;
@@ -243,21 +203,6 @@
 }
 
 /* MATERIALS SECTION */
-.btn-add-material {
-    background: #d97706;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: var(--radius-lg);
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-add-material:hover {
-    background: #b45309;
-}
 
 .info-box {
     background: #fef3c7;
@@ -319,43 +264,7 @@
     align-items: center;
 }
 
-.btn-icon {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    transition: var(--transition);
-    padding: 4px 8px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.btn-download:hover {
-    transform: scale(1.2);
-}
-
-.btn-edit:hover {
-    transform: scale(1.2);
-}
-
-.btn-delete {
-    opacity: 0.6;
-}
-
-.btn-delete:hover {
-    opacity: 1;
-    transform: scale(1.2);
-}
-
-.inline-form {
-    display: inline;
-}
-
-.inline-form button {
-    margin: 0;
-    padding: 0;
-}
 
 /* STUDENTS SECTION */
 .student-name {

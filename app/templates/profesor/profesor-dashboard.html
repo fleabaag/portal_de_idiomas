@@ -53,15 +53,9 @@ Dashboard Profesor
         {% for curso in cursos_publicados %}
         <div class="dashboard-card course-card">
             <div class="course-flag">
-                {% if curso.idioma.nombre_idioma == "Inglés" %}
-                <img src="{{ url_for('static', filename='images/uk-flag.png') }}" alt="Bandera Inglés"
-                    class="flag-image">
-                {% elif curso.idioma.nombre_idioma == "Alemán" %}
-                <img src="{{ url_for('static', filename='images/de-flag.png') }}" alt="Bandera Alemán"
-                    class="flag-image">
-                {% else %}
+
                 <div class="flag-placeholder">{{ curso.idioma.nombre_idioma[:2].upper() }}</div>
-                {% endif %}
+                
             </div>
             <div class="course-info">
                 <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>

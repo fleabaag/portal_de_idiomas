@@ -65,13 +65,19 @@ Detalle de Curso - Profesor
         </div>
         <div class="course-header-actions">
             {% if curso.estado.name != 'CERRADO' %}
-            <button id="toggle-edit-course" class="btn-action btn-edit">✏️ Editar curso</button>
+            <button id="toggle-edit-course" class="btn-action btn-edit">
+                <span class="btn-action-icon"></span>
+                Editar curso
+            </button>
             {% endif %}
 
             {% if curso.estado.name == 'BORRADOR' %}
             <form method="POST" action="{{ url_for('profesor.publicar_curso', id_curso=curso.id_curso) }}"
                 class="inline-form">
-                <button type="submit" class="btn-action btn-publish">📤 Publicar</button>
+                <button type="submit" class="btn-action btn-publish">
+                    <span class="btn-action-icon"></span>
+                    Publicar
+                </button>
             </form>
             {% endif %}
 
@@ -79,7 +85,10 @@ Detalle de Curso - Profesor
             <form method="POST" action="{{ url_for('profesor.archivar_curso', id_curso=curso.id_curso) }}"
                 class="inline-form"
                 onsubmit="return confirm('¿Estás seguro de que deseas archivar este curso? Esta acción no se puede deshacer.')">
-                <button type="submit" class="btn-action btn-archive">📦 Archivar</button>
+                <button type="submit" class="btn-action btn-archive">
+                    <span class="btn-action-icon"></span>
+                    Archivar
+                </button>
             </form>
             {% endif %}
 
@@ -87,7 +96,9 @@ Detalle de Curso - Profesor
             <form method="POST" action="{{ url_for('profesor.eliminar_curso', id_curso=curso.id_curso) }}"
                 class="inline-form"
                 onsubmit="return confirm('¿Estás seguro de que deseas eliminar este curso? No se puede deshacer.')">
-                <button type="submit" class="btn-action btn-delete">🗑️ Eliminar</button>
+                <button type="submit" class="btn-action btn-delete">
+                    <span class="btn-action-icon"></span> Eliminar
+                </button>
             </form>
             {% endif %}
 

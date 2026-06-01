@@ -36,6 +36,125 @@
 }
 
 
+.btn-action {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--color-input);
+    transition: var(--transition);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    
+    min-width: 150px;    
+    height: 40px;    
+    box-sizing: border-box;
+}
+
+.btn-action-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.btn-edit .btn-action-icon {
+    background-image: var(--icon-edit-light);
+}
+
+.btn-publish .btn-action-icon {
+    background-image: var(--icon-upload);
+}
+
+.btn-archive .btn-action-icon {
+    background-image: var(--icon-archived);
+}
+
+.btn-delete .btn-action-icon {
+    background-image: var(--icon-trash-light);
+}
+
+.btn-edit {
+    background: var(--alert-security);
+}
+
+.btn-edit:hover {
+    opacity: 0.9;
+}
+
+.btn-publish {
+    background: var(--alert-success);
+}
+
+.btn-publish:hover {
+    opacity: 0.9;
+}
+
+.btn-archive {
+    background: var(--alert-error);
+}
+
+.btn-archive:hover {
+    opacity: 0.9;
+}
+
+.btn-delete {
+    background: var(--alert-error);
+}
+
+.btn-delete:hover {
+    opacity: 0.9;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--color-input);
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-download:hover {
+    opacity: 0.9;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.inline-form button {
+    margin: 0;
+}
+
+.btn-add-material {
+    background: var(--color-danger);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-add-material:hover {
+    background: #b45309;
+}
+
 /* .btn-primary {
     background: #5c5c3c;
     color: white;
