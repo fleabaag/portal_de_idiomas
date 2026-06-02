@@ -31,42 +31,55 @@
     backdrop-filter: blur(4px);
     transition: opacity .4s ease;
     box-shadow: var(--shadow-md);
+    color: var(--color-text-dark);
+}
+
+.flash-alert.alert {
+    color: white;
 }
 
 .flash-alert.success {
     background: rgba(111, 159, 90, .16);
-    color: #d7f0c9;
     border-color: var(--alert-success);
 }
 
 .flash-alert.error {
     background: rgba(201, 74, 74, .18);
-    color: #ffd8d8;
     border-color: var(--alert-error);
 }
 
 .flash-alert.warning {
     background: rgba(215, 169, 74, .18);
-    color: #fff1c9;
     border-color: var(--alert-warning);
 }
 
 .flash-alert.info {
     background: rgba(138, 168, 200, .16);
-    color: #dbeaff;
     border-color: var(--alert-info);
 }
 
 .flash-alert.validation {
     background: rgba(185, 130, 90, .18);
-    color: #ffe7d3;
     border-color: var(--alert-validation);
 }
 
 .flash-alert.security {
     background: rgba(143, 107, 184, .16);
-    color: #efe3ff;
     border-color: var(--alert-security);
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+}
+
+.dashboard-card {
+    padding: var(--space-xl);
+    background: var(--surface-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
 }
 
 /* COURSES SECTION */
@@ -204,10 +217,7 @@
     color: #d97706;
 }
 
-.archived-badge {
-    background-color: #e5e7eb;
-    color: #6b7280;
-}
+
 
 .draft-card,
 .archived-card {

@@ -124,8 +124,12 @@ Detalle de Curso - Profesor
 
         {% if curso.estado.name == 'PUBLICADO' %}
         <div class="info-box" style="background-color: #e3f2fd; border-left: 4px solid #2196F3; margin-bottom: 1.5rem;">
-            <p><strong>ℹ️ Curso publicado:</strong> Cuando un curso está publicado, solo puedes editar la descripción y
-                los horarios. Los campos de idioma, año, nivel y período están bloqueados.</p>
+            <p>         
+                <span class="info-box-icon"></span>
+
+                <strong> Curso publicado:</strong> Cuando un curso está publicado, solo puedes editar la descripción y
+                los horarios. Los campos de idioma, año, nivel y período están bloqueados.
+            </p>
         </div>
         {% endif %}
 
@@ -205,8 +209,8 @@ Detalle de Curso - Profesor
     </div>
 
     <div style="display:flex;gap:1rem;justify-content:flex-end;margin-bottom:2rem;">
-        <button type="button" id="cancel-edit" class="btn-secondary">Cancelar</button>
-        <button type="submit" id="save-edit" class="btn-primary">Guardar cambios</button>
+        <button type="button" id="cancel-edit" class="btn-cancelar">Cancelar</button>
+        <button type="submit" id="save-edit" class="btn-guardar">Guardar cambios</button>
     </div>
 </form>
 {% else %}
@@ -218,25 +222,10 @@ Detalle de Curso - Profesor
 <!-- SECCIÓN DE INFORMACIÓN -->
 <div class="course-section info-section">
     <div class="section-header-detail">
-        <h2>📋 Información</h2>
-    </div>
-    <div class="info-grid">
-        <div class="info-item">
-            <label>Idioma</label>
-            <p>{{ curso.idioma.nombre_idioma }}</p>
-        </div>
-        <div class="info-item">
-            <label>Nivel</label>
-            <p>{{ curso.nivel.value }}</p>
-        </div>
-        <div class="info-item">
-            <label>Período</label>
-            <p>{{ curso.periodo.value }} {{ curso.anio }}</p>
-        </div>
-        <div class="info-item">
-            <label>Estado</label>
-            <p>{{ curso.estado.value }}</p>
-        </div>
+        <h2>
+            <span class="section-icon section-info-icon"></span>
+            Información
+        </h2>
     </div>
 
     {% if curso.descripcion_curso %}
@@ -250,7 +239,10 @@ Detalle de Curso - Profesor
 <!-- SECCIÓN DE HORARIOS -->
 <div class="course-section schedules-section">
     <div class="section-header-detail">
-        <h2>🕐 Horarios:</h2>
+        <h2>
+            <span class="section-icon section-schedule-icon"></span>
+            Horarios
+        </h2>
     </div>
 
     {% if curso.horario %}
@@ -263,7 +255,10 @@ Detalle de Curso - Profesor
 <!-- SECCIÓN DE MATERIAL DEL CURSO -->
 <div class="course-section materials-section">
     <div class="section-header-detail">
-        <h2>📚 Material del curso</h2>
+        <h2>
+            <span class="section-icon section-material-icon"></span>
+            Material del curso
+        </h2>
         {% if curso.estado.name == 'PUBLICADO' %}
         <button class="btn-add-material" id="btn-add-material">+ Agregar material</button>
         {% endif %}
@@ -271,7 +266,8 @@ Detalle de Curso - Profesor
 
     {% if curso.estado.name == 'BORRADOR' %}
     <div class="info-box">
-        <p>⚠️ Solo puedes subir materiales cuando el curso está publicado.</p>
+        <span class="info-box-icon"></span>
+        <p>Solo puedes subir materiales cuando el curso está publicado.</p>
     </div>
     {% endif %}
 
@@ -293,14 +289,24 @@ Detalle de Curso - Profesor
                         <span class="badge badge-type">{{ material.tipo_archivo|upper }}</span>
                     </td>
                     <td class="material-actions">
-                        <a href="{{ material.url_archivo }}" class="btn-icon btn-download" title="Descargar">⬇️</a>
+                        <a href="{{ material.url_archivo }}" class="btn-action btn-download" title="Descargar">
+                            <span class="btn-action-icon"></span>
+                            Descargar
+                        </a>
                         <a href="{{ url_for('profesor.actualizar_material', id_material=material.id_material) }}"
-                            class="btn-icon btn-edit" title="Editar">✏️</a>
+                            class="btn-action btn-edit" title="Editar">
+                            <span class="btn-action-icon"></span>
+                            Editar
+                        </a>
                         <form method="POST"
                             action="{{ url_for('profesor.eliminar_material', id_material=material.id_material) }}"
                             class="inline-form"
                             onsubmit="return confirm('¿Eliminar el material &quot;{{ material.titulo }}&quot;?');">
-                            <button type="submit" class="btn-icon btn-delete" title="Eliminar">🗑️</button>
+
+                            <button type="submit" class="btn-action btn-delete" title="Eliminar">
+                                <span class="btn-action-icon"></span>
+                                Eliminar
+                            </button>
                         </form>
                     </td>
                 </tr>
@@ -316,7 +322,10 @@ Detalle de Curso - Profesor
 <!-- SECCIÓN DE ALUMNOS Y CALIFICACIONES -->
 <div class="course-section students-section">
     <div class="section-header-detail">
-        <h2>👥 Alumnos</h2>
+        <h2>
+            <span class="section-icon section-students-icon"></span>
+            Alumnos
+        </h2>
         <span class="student-count">Total: {{ curso.inscripciones|length }}</span>
     </div>
 
@@ -345,11 +354,12 @@ Detalle de Curso - Profesor
                     </td>
                     <td class="student-actions">
                         {% if curso.estado.name == 'PUBLICADO' %}
-                        <button class="btn-update-grade" data-alumno-id="{{ inscripcion.id_alumno }}"
+                        <button class="btn-action btn-update-grade" data-alumno-id="{{ inscripcion.id_alumno }}"
                             data-alumno-nombre="{{ inscripcion.alumno.nombre_completo }}"
                             data-alumno-email="{{ inscripcion.alumno.email }}"
                             data-calificacion="{{ inscripcion.calificacion or '' }}">
-                            ✏️ Actualizar
+                            <span class="btn-action-icon"></span>
+                            Actualizar
                         </button>
                         {% else %}
                         <span class="text-muted">-</span>
@@ -385,8 +395,8 @@ Detalle de Curso - Profesor
                 <p class="form-help">Formatos: PDF, Word, Excel, PowerPoint, texto y documentos comunes</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary modal-close-btn">Cancelar</button>
-                <button type="submit" class="btn-primary">Agregar material</button>
+                <button type="button" class="btn-cancelar modal-close-btn">Cancelar</button>
+                <button type="submit" class="btn-guardar">Agregar material</button>
             </div>
         </form>
     </div>
@@ -409,11 +419,11 @@ Detalle de Curso - Profesor
             <div class="form-group">
                 <label for="modal-calificacion">Calificación (0.0 - 10.0) *</label>
                 <input type="number" name="calificacion" id="modal-calificacion" min="0" max="10" step="0.1"
-                    placeholder="7.5" required>
+                    placeholder="Ej: 7.5" required>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-secondary modal-close-btn">Cancelar</button>
-                <button type="submit" class="btn-primary">Guardar calificación</button>
+                <button type="button" class="btn-cancelar modal-close-btn">Cancelar</button>
+                <button type="submit" class="btn-guardar">Guardar calificación</button>
             </div>
         </form>
     </div>

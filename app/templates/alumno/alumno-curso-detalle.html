@@ -44,9 +44,8 @@ Detalle del Curso
 
     <div class="course-header-actions">
         {% if not inscrito %}
-        <form method="POST"
-              action="{{ url_for('alumno.inscribir_curso', id_curso=curso.id_curso) }}"
-              onsubmit="return confirm('¿Confirmar inscripción?')">
+        <form method="POST" action="{{ url_for('alumno.inscribir_curso', id_curso=curso.id_curso) }}"
+            onsubmit="return confirm('¿Confirmar inscripción?')">
             <button type="submit" class="btn-action btn-publish">
                 Inscribirme
             </button>
@@ -56,19 +55,13 @@ Detalle del Curso
 </div>
 
 <!-- INFORMACIÓN -->
-<div class="course-section">
-    <h2>📋 Información general</h2>
+<div class="course-section info-section">
+    <h2>
+        <span class="section-icon section-info-icon"></span>
+        Información
+    </h2>
 
     <div class="info-grid">
-        <div class="info-item">
-            <label>Idioma</label>
-            <p>{{ curso.idioma.nombre_idioma }}</p>
-        </div>
-
-        <div class="info-item">
-            <label>Nivel</label>
-            <p>{{ curso.nivel.value }}</p>
-        </div>
 
         <div class="info-item">
             <label>Profesor</label>
@@ -83,19 +76,23 @@ Detalle del Curso
 
     {% if curso.descripcion_curso %}
     <div class="description-box">
+        <label>Descripción del curso:</label>
         <p>{{ curso.descripcion_curso }}</p>
     </div>
     {% endif %}
 </div>
 
 <!-- HORARIOS -->
-<div class="course-section">
-    <h2>🕐 Horarios</h2>
+<div class="course-section schedules-section">
+    <h2>
+        <span class="section-icon section-schedule-icon"></span>
+        Horarios
+    </h2>
 
     {% if horarios_grouped %}
-        {{ render_schedule_groups(horarios_grouped) }}
+    {{ render_schedule_groups(horarios_grouped) }}
     {% else %}
-        <p class="text-muted">No hay horarios registrados.</p>
+    <p class="text-muted">No hay horarios registrados.</p>
     {% endif %}
 </div>
 
@@ -103,8 +100,9 @@ Detalle del Curso
 {% if not inscrito %}
 <div class="course-section">
     <div class="info-box">
+        <span class="info-box-icon"></span>
         <p>
-            🔒 Inscríbete para acceder a materiales y consultar tu calificación.
+            Inscríbete para acceder a materiales y consultar tu calificación.
         </p>
     </div>
 </div>
@@ -112,47 +110,58 @@ Detalle del Curso
 
 <!-- MATERIALES -->
 {% if inscrito %}
-<div class="course-section">
-    <h2>📚 Material del curso</h2>
+<div class="course-section materials-section">
+    <h2>
+        <span class="section-icon section-material-icon"></span>
+        Material del curso
+    </h2>
 
     {% if curso.materiales %}
-    <table>
-        <thead>
-            <tr>
-                <th>Título</th>
-                <th>Tipo</th>
-                <th>Descarga</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for material in curso.materiales %}
-            <tr>
-                <td>{{ material.titulo }}</td>
-                <td>{{ material.tipo_archivo|upper }}</td>
-                <td>
-                    <a href="{{ material.url_archivo }}" class="btn-link">
-                        Descargar
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="materials-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material in curso.materiales %}
+                <tr>
+                    <td class="material-title">{{ material.titulo }}</td>
+                    <td class="material-type">
+                        <span class="badge badge-type">{{ material.tipo_archivo|upper }}</span>
+                    </td>
+                    <td class="material-actions">
+                        <a href="{{ material.url_archivo }}" class="btn-action btn-download" title="Descargar">
+                            <span class="btn-action-icon"></span>
+                            Descargar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-    <p class="text-muted">No hay materiales disponibles.</p>
+    <p class="text-muted">Aún no se han subido materiales para este curso.</p>
     {% endif %}
 </div>
 
 <!-- CALIFICACIÓN -->
 <div class="course-section">
-    <h2>📊 Mi calificación</h2>
+    <h2>
+        <span class="section-icon section-grade-icon"></span>
+        Mi calificación
+    </h2>
 
     {% if inscripcion.calificacion is not none %}
-        <div class="grade-badge">
-            {{ inscripcion.calificacion }}
-        </div>
+    <div class="grade-badge">
+        {{ inscripcion.calificacion }}
+    </div>
     {% else %}
-        <p class="text-muted">Aún no hay calificación registrada.</p>
+    <p class="text-muted">Aún no hay calificación registrada.</p>
     {% endif %}
 </div>
 {% endif %}

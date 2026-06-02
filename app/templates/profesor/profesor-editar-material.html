@@ -49,47 +49,23 @@ Editar Material - Profesor
             <p class="course-level">{{ material.titulo }}</p>
         </div>
         <div class="course-header-actions">
-            <a href="{{ url_for('profesor.curso_detalle', id_curso=material.id_curso) }}" class="btn-action btn-secondary">
+            <a href="{{ url_for('profesor.curso_detalle', id_curso=material.id_curso) }}" class="btn-action btn-add-course">
                 ← Volver al curso
             </a>
         </div>
     </div>
 </div>
 
-<!-- Mensajes -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-    {% for category, message in messages %}
-    <div class="flash-alert {{ category }}">{{ message }}</div>
-    {% endfor %}
-{% endif %}
-{% endwith %}
-
 <!-- SECCIÓN DE INFORMACIÓN ACTUAL -->
-<div class="course-section info-section">
-    <div class="section-header-detail">
-        <h2>📋 Información actual del material</h2>
-    </div>
-    <div class="info-grid">
-        <div class="info-item">
-            <label>Título</label>
-            <p>{{ material.titulo }}</p>
-        </div>
-        <div class="info-item">
-            <label>Tipo</label>
-            <p><span class="badge badge-type">{{ material.tipo_archivo|upper }}</span></p>
-        </div>
-        <div class="info-item">
-            <label>Archivo</label>
-            <p><a href="{{ material.url_archivo }}" class="btn-icon btn-download" title="Descargar">⬇️ Descargar</a></p>
-        </div>
-    </div>
-</div>
+
 
 <!-- FORMULARIO DE EDICIÓN -->
 <div class="course-section">
     <div class="section-header-detail">
-        <h2>✏️ Editar material</h2>
+        <h2>
+            <span class="section-icon section-edit-icon"></span>
+            Editar material
+        </h2>
     </div>
     <p style="color: #666; margin-bottom: 1.5rem;">Cambia el título o reemplaza el archivo. Si dejas el archivo vacío, se conserva el actual.</p>
 
@@ -110,8 +86,8 @@ Editar Material - Profesor
         </div>
 
         <div style="display:flex;gap:1rem;justify-content:flex-end;">
-            <a href="{{ url_for('profesor.curso_detalle', id_curso=material.id_curso) }}" class="btn-secondary">Cancelar</a>
-            <button type="submit" class="btn-primary">Guardar cambios</button>
+            <a href="{{ url_for('profesor.curso_detalle', id_curso=material.id_curso) }}" class="btn-cancelar">Cancelar</a>
+            <button type="submit" class="btn-guardar">Guardar cambios</button>
         </div>
     </form>
 </div>

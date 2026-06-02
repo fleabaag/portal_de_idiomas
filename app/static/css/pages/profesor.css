@@ -105,7 +105,46 @@
     font-weight: 700;
     color: #5c5c3c;
     margin: 0;
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
 }
+
+.section-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.section-info-icon {
+    background-image: var(--icon-descripcion);
+}
+
+.section-schedule-icon {
+    background-image: var(--icon-horario);
+}
+
+.section-material-icon {
+    background-image: var(--icon-material);
+}
+
+.section-students-icon {
+    background-image: var(--icon-alumnos);
+}
+
+.section-edit-icon {
+    background-image: var(--icon-edit-dark);
+}
+
+.section-grade-icon {
+    background-image: var(--icon-calificacion);
+}
+
 
 .student-count {
     background: #f3f4f6;
@@ -211,6 +250,28 @@
     border-radius: var(--radius-sm);
     color: #92400e;
     font-size: 14px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+}
+
+.info-box p{
+    margin: 0;
+}
+
+.info-box-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    flex-shrink: 0;
+
+    background-image: var(--icon-advertencia);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    margin-top: 2px;
 }
 
 .materials-table table,
@@ -297,21 +358,7 @@
     font-weight: 600;
 }
 
-.btn-update-grade {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: var(--radius-sm);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-}
 
-.btn-update-grade:hover {
-    background: #2563eb;
-}
 
 /* TEXT UTILITIES */
 .text-muted {

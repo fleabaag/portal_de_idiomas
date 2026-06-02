@@ -118,8 +118,8 @@
 }
 
 .archived-badge {
-    background-color: #e5e7eb;
-    color: #6b7280;
+    background-color: var(--alert-error);;
+    color: white;
 }
 
 .draft-card,

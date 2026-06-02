@@ -1,5 +1,7 @@
 .btn-primary,
-.btn-secondary {
+.btn-secondary,
+.btn-cancelar,
+.btn-guardar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -35,6 +37,16 @@
     color: var(--color-text-dark);
 }
 
+.btn-cancelar {
+    background: var(--alert-error);
+    color: white;
+}
+
+.btn-guardar {
+    background: var(--alert-success);
+    color: white;
+}
+
 
 .btn-action {
     padding: 10px 20px;
@@ -43,7 +55,7 @@
     font-weight: 600;
     cursor: pointer;
     font-size: 14px;
-    color: var(--color-input);
+    color: white;
     transition: var(--transition);
 
     display: inline-flex;
@@ -83,7 +95,7 @@
 }
 
 .btn-edit {
-    background: var(--alert-security);
+    background: var(--alert-info);
 }
 
 .btn-edit:hover {
@@ -114,6 +126,30 @@
     opacity: 0.9;
 }
 
+.btn-download {
+    background: var(--alert-success);
+}
+
+.btn-download:hover {
+    opacity: 0.9;
+}
+
+.btn-download .btn-action-icon {
+    background-image: var(--icon-cloud-download-light);
+}
+
+.btn-update-grade {
+    background: var(--alert-info);
+}
+
+.btn-update-grade:hover {
+    opacity: 0.9;
+}
+
+.btn-update-grade .btn-action-icon {
+    background-image: var(--icon-edit-light);
+}
+
 .btn-icon {
     background: none;
     border: none;
@@ -137,6 +173,13 @@
 
 .inline-form button {
     margin: 0;
+}
+
+.material-actions {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .btn-add-material {
