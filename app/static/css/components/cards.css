@@ -118,7 +118,8 @@
 }
 
 .archived-badge {
-    background-color: var(--alert-error);;
+    background-color: var(--alert-error);
+    ;
     color: white;
 }
 
@@ -245,6 +246,11 @@
     min-height: 100px;
 }
 
+.create-user-form input,
+.create-user-form select {
+    background-color: #f9f9f9;
+}
+
 .modal-footer {
     display: flex;
     gap: var(--space-md);
@@ -262,8 +268,123 @@
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .modal-content {
         max-width: 95vw;
     }
+}
+
+
+.metric-card {
+    background: var(--alert-validation);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    color: var(--color-input);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.5rem;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+}
+
+.metric-label {
+    font-size: 1.2rem;
+    color: var(--color-input);
+    font-weight: 1000;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.course-status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.status-card {
+    padding: 1rem;
+    border-radius: 12px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-weight: 600;
+}
+
+.status-card strong {
+    font-size: 1.5rem;
+}
+
+.status-success {
+    background: #ecfdf5;
+}
+
+.status-warning {
+    background: #fffbeb;
+}
+
+.status-secondary {
+    background: #f3f4f6;
+}
+
+.language-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.language-form input {
+    min-width: 0;
+}
+
+.language-form input[name="nombre_idioma"] {
+    flex: 1;
+}
+
+.language-form input[name="descripcion_idioma"] {
+    flex: 2;
+}
+
+.language-form button {
+    flex-shrink: 0;
+}
+
+.languages-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.languages-table td,
+.languages-table th {
+    padding: 1rem;
+}
+
+.languages-table tbody tr {
+    border-top: 1px solid #e5e7eb;
+}
+
+.languages-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.language-badge {
+    display: inline-block;
+
+    padding: .4rem .9rem;
+
+    border-radius: 999px;
+
+    background: #eef2ff;
+
+    color: #4338ca;
+
+    font-weight: 600;
 }

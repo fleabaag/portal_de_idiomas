@@ -82,4 +82,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    document.getElementById('usersToggle').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        this.classList.toggle('open');
+        document.getElementById('usersSubmenu').classList.toggle('open');
+    });
+
 });

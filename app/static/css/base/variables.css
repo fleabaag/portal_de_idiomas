@@ -64,5 +64,11 @@
     --icon-calificacion: url("/static/img/icons/stats.png");
     --icon-advertencia: url("/static/img/icons/triangle-warning.png");
     --icon-alumnos: url("/static/img/icons/users-alt.png");
+    --icon-idiomas: url("/static/img/icons/language.png");
+    --icon-home: url("/static/img/icons/house-chimney.png");
+    --icon-users: url("/static/img/icons/users-alt-light.png");
+    --icon-filtro: url("/static/img/icons/bars-filter.png");
+    --icon-limpiar: url("/static/img/icons/broom.png");
+    --icon-detalles: url("/static/img/icons/eye.png");
 
 }

@@ -1,0 +1,327 @@
+{% extends "dashboard-base.html" %}
+
+{% block title %}
+Usuarios - Administrador
+{% endblock %}
+
+<!-- ===================== SIDEBAR ===================== -->
+
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
+
+{% block sidebar_initials %}
+{% if current_user.primer_apellido and current_user.segundo_apellido %}
+{{ (current_user.primer_apellido[0] + current_user.segundo_apellido[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
+
+{% block sidebar_nav %}
+
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link sidebar-home">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Resumen</span>
+</a>
+
+<a href="{{ url_for('admin.cursos') }}" class="sidebar-link sidebar-cursos">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Cursos</span>
+</a>
+
+<!-- <a href="#" class="sidebar-link sidebar-languages">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Idiomas</span> -->
+</a>
+
+<a href="{{ url_for('admin.usuarios') }}" class="sidebar-link sidebar-users active">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Usuarios</span>
+</a>
+
+{% endblock %}
+
+<!-- ===================== BREADCRUMBS ===================== -->
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<span>Usuarios</span>
+{% endblock %}
+
+<!-- ===================== CONTENIDO ===================== -->
+
+{% block dashboard_content %}
+
+<div class="course-detail-header">
+
+    <div class="course-header-top">
+
+        <div class="course-title-section">
+            <h1>Usuarios</h1>
+
+            <p class="course-level">
+                Administración de cuentas del sistema
+            </p>
+        </div>
+
+        <div class="course-header-actions">
+
+            <a href="{{ url_for('admin.crear_usuario') }}" class="btn-action btn-publish">
+
+                <span class="btn-action-icon"></span>
+                Nuevo usuario
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ===================== ADMINISTRADORES ===================== -->
+
+<div class="course-section">
+
+    <div class="section-header-detail">
+        <h2>Administradores</h2>
+        <span class="student-count">
+            {{ administradores|length }}
+        </span>
+    </div>
+
+    {% if administradores %}
+
+    <div class="students-table">
+
+        <table>
+
+            <thead>
+                <tr>
+
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for admin in administradores %}
+
+                <tr>
+
+
+
+                    <td>{{ admin.nombre_completo }}</td>
+
+                    <td>{{ admin.email }}</td>
+
+                    <td>
+
+                        {% if admin.id_user != current_user.id_user %}
+
+                        <form method="POST" action="{{ url_for('admin.eliminar_usuario',
+                                    id_usuario=admin.id_user) }}" class="inline-form"
+                            onsubmit="return confirm('¿Eliminar este administrador?');">
+
+                            <button type="submit" class="btn-action btn-delete">
+                                <span class="btn-action-icon"></span>
+                                Eliminar
+                            </button>
+
+                        </form>
+
+                        {% else %}
+
+                        <span class="badge badge-secondary">
+                            Sesión actual
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+    <p class="text-muted">No hay administradores registrados.</p>
+    {% endif %}
+
+</div>
+
+<!-- ===================== PROFESORES ===================== -->
+
+<div class="course-section">
+
+    <div class="section-header-detail">
+        <h2>Profesores</h2>
+
+        <span class="student-count">
+            {{ profesores|length }}
+        </span>
+    </div>
+
+    {% if profesores %}
+
+    <div class="students-table">
+
+        <table>
+
+            <thead>
+                <tr>
+                    
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Sueldo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for profesor in profesores %}
+
+                <tr>
+
+                    
+
+                    <td>{{ profesor.nombre_completo }}</td>
+
+                    <td>{{ profesor.email }}</td>
+
+                    <td>
+
+                        <form method="POST" action="{{ url_for('admin.cambiar_sueldo',
+                                    id_profesor=profesor.id_profesor) }}" class="inline-form">
+
+                            <input type="number" name="sueldo" min="1" step="0.01" value="{{ profesor.sueldo }}"
+                                required>
+
+                            <button type="submit" class="btn-action btn-edit">
+                                <span class="btn-action-icon"></span>
+                                Actualizar
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                    <td>
+
+                        <form method="POST" action="{{ url_for('admin.eliminar_usuario',
+                                    id_usuario=profesor.id_profesor) }}" class="inline-form"
+                            onsubmit="return confirm('¿Eliminar este profesor?');">
+
+                            <button type="submit" class="btn-action btn-delete">
+                                <span class="btn-action-icon"></span>
+                                Eliminar
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+    <p class="text-muted">No hay profesores registrados.</p>
+    {% endif %}
+
+</div>
+
+<!-- ===================== ALUMNOS ===================== -->
+
+<div class="course-section">
+
+    <div class="section-header-detail">
+        <h2>Alumnos</h2>
+
+        <span class="student-count">
+            {{ alumnos|length }}
+        </span>
+    </div>
+
+    {% if alumnos %}
+
+    <div class="students-table">
+
+        <table>
+
+            <thead>
+                <tr>
+                    
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Fecha de registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for alumno in alumnos %}
+
+                <tr>
+
+                    
+
+                    <td>{{ alumno.nombre_completo }}</td>
+
+                    <td>{{ alumno.email }}</td>
+
+                    <td>
+                        {{ alumno.fecha_registro.strftime('%d/%m/%Y') }}
+                    </td>
+
+                    <td>
+
+                        <form method="POST" action="{{ url_for('admin.eliminar_usuario',
+                                    id_usuario=alumno.id_alumno) }}" class="inline-form"
+                            onsubmit="return confirm('¿Eliminar este alumno?');">
+
+                            <button type="submit" class="btn-action btn-delete">
+                                <span class="btn-action-icon"></span>
+                                Eliminar
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+    <p class="text-muted">No hay alumnos registrados.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

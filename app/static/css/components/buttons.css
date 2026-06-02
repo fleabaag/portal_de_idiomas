@@ -94,6 +94,28 @@
     background-image: var(--icon-trash-light);
 }
 
+.btn-limpiar .btn-action-icon{
+    background-image: var(--icon-limpiar);
+}
+
+.btn-filtrar .btn-action-icon {
+    background-image: var(--icon-filtro);
+}
+
+.btn-detalles .btn-action-icon {
+    background-image: var(--icon-detalles);
+}
+
+.btn-limpiar, .btn-filtrar, .btn-detalles{
+    background: var(--color-panel);
+}
+
+.btn-limpiar:hover, .btn-filtrar:hover, .btn-detalles:hover {
+    opacity: 0.9;
+}
+
+
+
 .btn-edit {
     background: var(--alert-info);
 }
@@ -111,7 +133,7 @@
 }
 
 .btn-archive {
-    background: var(--alert-error);
+    background: var(--alert-warning);
 }
 
 .btn-archive:hover {
@@ -168,11 +190,18 @@
 }
 
 .inline-form {
-    display: inline;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.inline-form button {
-    margin: 0;
+.inline-form input[type="number"] {
+    width: 120px;
+}
+
+.inline-form input {
+    background-color: rgb(223, 223, 223);
+    border: 1px solid var(--border-color);
 }
 
 .material-actions {

@@ -1,0 +1,200 @@
+{% extends "dashboard-base.html" %}
+
+{% block title %}Administrar Cursos{% endblock %}
+
+
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
+
+
+{% block sidebar_initials %}
+{% if current_user.primer_apellido and current_user.segundo_apellido %}
+{{ (current_user.primer_apellido[0] + current_user.segundo_apellido[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
+
+{% block sidebar_nav %}
+
+<a href="{{ url_for('admin.dashboard') }}"
+   class="sidebar-link sidebar-home">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Resumen</span>
+</a>
+
+<a href="{{ url_for('admin.cursos') }}"
+   class="sidebar-link sidebar-cursos active">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Cursos</span>
+</a>
+
+<!-- <a href="#"
+   class="sidebar-link sidebar-languages">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Idiomas</span>
+</a> -->
+
+<a href="{{ url_for('admin.usuarios') }}"
+   class="sidebar-link sidebar-users">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Usuarios</span>
+</a>
+
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="course-section materials-section">
+
+    <div class="section-header-detail">
+        <h2>Administrar Cursos</h2>
+    </div>
+
+    <!-- Filtros -->
+    <form method="GET" class="course-form">
+        <div class="form-row">
+
+            <div class="form-group">
+                <label for="profesor_id">Profesor</label>
+                <select name="profesor_id" id="profesor_id">
+                    <option value="">Todos</option>
+                    {% for profesor in profesores %}
+                    <option value="{{ profesor.id_profesor }}" {% if filtros.profesor_id==profesor.id_profesor
+                        %}selected{% endif %}>
+                        {{ profesor.nombre_completo }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="idioma_id">Idioma</label>
+                <select name="idioma_id" id="idioma_id">
+                    <option value="">Todos</option>
+                    {% for idioma in idiomas %}
+                    <option value="{{ idioma.id_idioma }}" {% if filtros.idioma_id==idioma.id_idioma %}selected{% endif
+                        %}>
+                        {{ idioma.nombre_idioma }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select name="estado" id="estado">
+                    <option value="">Todos</option>
+                    {% for estado in estados %}
+                    <option value="{{ estado.name }}" {% if filtros.estado==estado.name %}selected{% endif %}>
+                        {{ estado.value }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="actions-cell">
+            <button type="submit" class="btn-action btn-filtrar">
+                <span class="btn-action-icon"></span>
+                Filtrar
+            </button>
+            <a href="{{ url_for('admin.cursos') }}" class="btn-action btn-limpiar">
+                <span class="btn-action-icon"></span>
+                Limpiar
+            </a>
+        </div>
+    </form>
+
+    {% if cursos %}
+    <div class="materials-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Curso</th>
+                    <th>Profesor</th>
+                    <th>Periodo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for curso in cursos %}
+                <tr>
+
+                    <td class="material-title">
+                        {{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}
+                    </td>
+
+                    <td>{{ curso.profesor.nombre_completo }}</td>
+
+                    <td>
+                        {{ curso.periodo.value }} {{ curso.anio }}
+                    </td>
+
+                    <td>
+                        <span class="badge badge-type">
+                            {{ curso.estado.value }}
+                        </span>
+                    </td>
+
+                    <td class="material-actions">
+
+                        <!-- Ver -->
+                        <a href="{{ url_for('admin.curso_detalle', id_curso=curso.id_curso) }}"
+                            class="btn-action btn-detalles">
+                            <span class="btn-action-icon"></span>
+                            Ver detalles
+                        </a>
+
+
+                        <!-- Publicar -->
+                        {% if curso.estado.name == 'BORRADOR' %}
+                        <form method="POST" action="{{ url_for('admin.publicar_curso', id_curso=curso.id_curso) }}"
+                            class="inline-form"
+                            onsubmit="return confirm('¿Estás seguro de publicar este curso?');">
+                            <button type="submit" class="btn-action btn-publish">
+                                <span class="btn-action-icon"></span>
+                                Publicar
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        <!-- Archivar -->
+                        {% if curso.estado.name == 'PUBLICADO' %}
+                        <form method="POST" action="{{ url_for('admin.archivar_curso', id_curso=curso.id_curso) }}"
+                            class="inline-form"
+                            onsubmit="return confirm('¿Estás seguro de archivar este curso?');">
+                            <button type="submit" class="btn-action btn-archive">
+                                <span class="btn-action-icon"></span>
+                                Archivar
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        <!-- Eliminar -->
+                        {% if curso.estado.name in ['BORRADOR', 'CERRADO'] %}
+                        <form method="POST" action="{{ url_for('admin.eliminar_curso', id_curso=curso.id_curso) }}"
+                            class="inline-form" onsubmit="return confirm('¿Eliminar este curso?')">
+                            <button type="submit" class="btn-action btn-delete">
+                                <span class="btn-action-icon"></span>
+                                Eliminar
+                            </button>
+                        </form>
+                        {% endif %}
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+    <p class="text-muted">No hay cursos registrados.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
