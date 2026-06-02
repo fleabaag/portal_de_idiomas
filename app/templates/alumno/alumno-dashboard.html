@@ -50,28 +50,38 @@ Dashboard Alumno
         {% for curso in cursos %}
         <div class="dashboard-card course-card">
 
-            <a href="{{ url_for('alumno.curso_detalle', id_curso=curso.id_curso) }}" class="course-card-link">
+            <div class="course-flag">
 
-                <div class="course-info">
-                    <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
-                    <p class="course-period">{{ curso.periodo.value }} {{ curso.anio }}</p>
-                    <p>{{ curso.descripcion_curso[:90] ~ '...' if curso.descripcion_curso else 'Sin descripción' }}</p>
-                    <p class="course-students">
-                        Profesor: {{ curso.profesor.nombre }}
-                    </p>
-                </div>
+                <div class="flag-placeholder">{{ curso.idioma.nombre_idioma[:2].upper() }}</div>
 
-            </a>
+            </div>
+
+            <div class="course-info">
+                <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
+                <p class="course-period">{{ curso.periodo.value }} {{ curso.anio }}</p>
+                <p class="course-students">
+                    Profesor: {{ curso.profesor.nombre }}
+                </p>
+            </div>
+
+
 
             <div class="course-actions">
 
+                <a href="{{ url_for('alumno.curso_detalle', id_curso=curso.id_curso) }}"
+                    class="btn-action btn-detalles-light">
+                    <span class="btn-action-icon"></span>
+                    Ver Detalles
+                </a>
+
                 {% if curso.id_curso in ids_inscritos %}
-                <span class="btn-link disabled">Ya inscrito</span>
+                <span class="btn-action btn-edit disabled">Ya inscrito</span>
                 {% else %}
                 <form method="POST" action="{{ url_for('alumno.inscribir_curso', id_curso=curso.id_curso) }}"
                     onsubmit="return confirm('¿Deseas inscribirte en este curso?')">
 
-                    <button type="submit" class="btn-link">
+                    <button type="submit" class="btn-action btn-archive">
+                        <span class="btn-action-icon"></span>
                         Inscribirme
                     </button>
                 </form>

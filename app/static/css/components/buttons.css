@@ -102,7 +102,8 @@
     background-image: var(--icon-filtro);
 }
 
-.btn-detalles .btn-action-icon {
+.btn-detalles .btn-action-icon,
+.btn-detalles-light .btn-action-icon {
     background-image: var(--icon-detalles);
 }
 
@@ -110,7 +111,11 @@
     background: var(--color-panel);
 }
 
-.btn-limpiar:hover, .btn-filtrar:hover, .btn-detalles:hover {
+.btn-detalles-light {
+    background: var(--alert-success);
+}
+
+.btn-limpiar:hover, .btn-filtrar:hover, .btn-detalles:hover .btn-detalles-light:hover{
     opacity: 0.9;
 }
 

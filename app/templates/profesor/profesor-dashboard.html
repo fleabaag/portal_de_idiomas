@@ -55,7 +55,7 @@ Dashboard Profesor
             <div class="course-flag">
 
                 <div class="flag-placeholder">{{ curso.idioma.nombre_idioma[:2].upper() }}</div>
-                
+
             </div>
             <div class="course-info">
                 <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
@@ -63,11 +63,17 @@ Dashboard Profesor
                 <p class="course-students">{{ curso.inscripciones|length }} estudiantes inscritos</p>
             </div>
             <div class="course-actions">
-                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}" class="btn-link">Ver
-                    detalles</a>
+                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}"
+                    class="btn-action btn-detalles-light">
+                    <span class="btn-action-icon"></span>
+                    Ver detalles
+                </a>
                 <form method="POST" action="{{ url_for('profesor.archivar_curso', id_curso=curso.id_curso) }}"
                     class="form-archivar-curso inline-form">
-                    <button type="submit" class="btn-link btn-archive">Archivar</button>
+                    <button type="submit" class="btn-action btn-archive">
+                        <span class="btn-action-icon"></span>
+                        Archivar
+                    </button>
                 </form>
             </div>
         </div>
@@ -85,16 +91,23 @@ Dashboard Profesor
 
     <div class="dashboard-grid">
         {% for curso in cursos_borrador %}
-        <div class="dashboard-card course-card draft-card">
+        <div class="dashboard-card course-card">
             <div class="draft-badge">Borrador</div>
+            <div class="course-flag">
+
+                <div class="flag-placeholder">{{ curso.idioma.nombre_idioma[:2].upper() }}</div>
+
+            </div>
             <div class="course-info">
                 <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
                 <p class="course-period">{{ curso.periodo.value }} {{ curso.anio }}</p>
                 <p class="course-status">Pendiente de publicación</p>
             </div>
             <div class="course-actions">
-                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}"
-                    class="btn-link">Completar</a>
+                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}" class="btn-action btn-edit">
+                    <span class="btn-action-icon"></span>
+                    Completar
+                </a>
             </div>
         </div>
         {% endfor %}
@@ -111,14 +124,23 @@ Dashboard Profesor
 
     <div class="dashboard-grid">
         {% for curso in cursos_archivados %}
-        <div class="dashboard-card course-card archived-card">
+        <div class="dashboard-card course-card">
             <div class="archived-badge">Archivado</div>
+            <div class="course-flag">
+
+                <div class="flag-placeholder">{{ curso.idioma.nombre_idioma[:2].upper() }}</div>
+
+            </div>
             <div class="course-info">
                 <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
                 <p class="course-period">{{ curso.periodo.value }} {{ curso.anio }}</p>
             </div>
             <div class="course-actions">
-                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}" class="btn-link">Ver</a>
+                <a href="{{ url_for('profesor.curso_detalle', id_curso=curso.id_curso) }}"
+                    class="btn-action btn-detalles-light">
+                    <span class="btn-action-icon"></span>
+                    Ver detalles
+                </a>
             </div>
         </div>
         {% endfor %}

@@ -45,7 +45,11 @@ Cursos Inscritos
 
     {% for curso in cursos_inscritos %}
     <div class="dashboard-card course-card">
+        <div class="course-flag">
 
+            <div class="flag-placeholder">{{ curso.idioma.nombre_idioma[:2].upper() }}</div>
+
+        </div>
         <div class="course-info">
             <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
             <p class="course-period">{{ curso.periodo.value }} {{ curso.anio }}</p>
@@ -55,7 +59,8 @@ Cursos Inscritos
         </div>
 
         <div class="course-actions">
-            <a href="{{ url_for('alumno.curso_detalle', id_curso=curso.id_curso) }}" class="btn-link">
+            <a href="{{ url_for('alumno.curso_detalle', id_curso=curso.id_curso) }}" class="btn-action btn-detalles-light">
+                <span class="btn-action-icon"></span>
                 Ver detalles
             </a>
         </div>

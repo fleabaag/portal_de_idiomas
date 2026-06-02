@@ -30,20 +30,6 @@
     gap: var(--space-lg);
 }
 
-.dashboard-card {
-    background: rgba(36, 26, 11, 0.82);
-    border: 1px solid rgba(232, 208, 160, 0.08);
-    border-radius: var(--radius-lg);
-    padding: var(--space-lg);
-    box-shadow: var(--shadow-soft);
-    transition: var(--transition);
-    backdrop-filter: blur(10px);
-}
-
-.dashboard-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(232, 208, 160, 0.2);
-}
 
 .dashboard-body {
     margin: 0;
