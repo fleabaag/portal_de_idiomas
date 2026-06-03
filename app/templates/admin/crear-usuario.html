@@ -1,0 +1,240 @@
+{% extends "dashboard-base.html" %}
+
+{% block title %}
+Crear Usuario - Administrador
+{% endblock %}
+
+<!-- ===================== SIDEBAR ===================== -->
+
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
+
+{% block sidebar_initials %}
+{% if current_user.primer_apellido and current_user.segundo_apellido %}
+{{ (current_user.primer_apellido[0] + current_user.segundo_apellido[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
+
+{% block sidebar_nav %}
+
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link sidebar-home"> <span class="sidebar-icon"></span> <span
+        class="sidebar-text">Resumen</span> </a>
+
+<a href="{{ url_for('admin.cursos') }}" class="sidebar-link sidebar-cursos"> <span class="sidebar-icon"></span> <span
+        class="sidebar-text">Cursos</span> </a>
+
+<!-- <a href="#" class="sidebar-link sidebar-languages"> <span class="sidebar-icon"></span> <span
+        class="sidebar-text">Idiomas</span> </a> -->
+
+<a href="{{ url_for('admin.usuarios') }}" class="sidebar-link sidebar-users active"> <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Usuarios</span> </a>
+
+{% endblock %}
+
+<!-- ===================== BREADCRUMBS ===================== -->
+
+{% block breadcrumbs %} <a href="{{ url_for('admin.dashboard') }}">Inicio</a> <span
+    class="breadcrumb-separator">/</span> <a href="{{ url_for('admin.usuarios') }}">Usuarios</a> <span
+    class="breadcrumb-separator">/</span> <span>Nuevo usuario</span>
+{% endblock %}
+
+<!-- ===================== CONTENIDO ===================== -->
+
+{% block dashboard_content %}
+
+<div class="course-detail-header">
+
+
+    <div class="course-header-top">
+
+        <div class="course-title-section">
+            <h1>Nuevo usuario</h1>
+
+            <p class="course-level">
+                Registrar administrador o profesor
+            </p>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<form method="POST" class="create-user-form">
+
+
+    <!-- DATOS PERSONALES -->
+
+    <div class="course-section">
+
+        <h3>Información personal</h3>
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label>Nombre(s) *</label>
+
+                <input type="text" name="nombre" required value="{{ form_data.nombre if form_data else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Primer apellido *</label>
+
+                <input type="text" name="primer_apellido" required
+                    value="{{ form_data.primer_apellido if form_data else '' }}">
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label>Segundo apellido</label>
+
+            <input type="text" name="segundo_apellido" value="{{ form_data.segundo_apellido if form_data else '' }}">
+        </div>
+
+    </div>
+
+    <!-- CUENTA -->
+
+    <div class="course-section">
+
+        <h3>Cuenta de acceso</h3>
+
+        <div class="form-group">
+
+            <label>Rol *</label>
+
+            <select name="rol" id="rol" required>
+
+                <option value="">
+                    Selecciona un rol
+                </option>
+
+                <option value="ADMIN" {% if form_data and form_data.rol=='ADMIN' %} selected {% endif %}>
+                    Administrador
+                </option>
+
+                <option value="PROFESOR" {% if form_data and form_data.rol=='PROFESOR' %} selected {% endif %}>
+                    Profesor
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>E-mail *</label>
+
+            <input type="email" name="email" required value="{{ form_data.email if form_data else '' }}">
+
+        </div>
+
+        <div class="form-group" id="salary-container" style="display:none;">
+
+            <label>Sueldo mensual *</label>
+
+            <input type="number" name="sueldo" id="sueldo" min="1" step="0.01"
+                value="{{ form_data.sueldo if form_data else '' }}">
+
+        </div>
+
+    </div>
+
+    <!-- CONTRASEÑA -->
+
+    <div class="course-section">
+
+        <h3>Seguridad</h3>
+
+        <div class="form-group">
+
+            <label>Contraseña *</label>
+
+            <div class="input-wrapper">
+
+                <input type="password" name="password" id="password" required>
+
+                <button type="button" id="togglePassword" class="toggle-password">
+
+                    <img id="eyeIcon" src="{{ url_for('static',
+                    filename='img/view.png') }}" alt="Ver contraseña">
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Confirmar contraseña *</label>
+
+            <input type="password" name="confirm_password" required>
+
+        </div>
+
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:1rem;">
+
+        <a href="{{ url_for('admin.usuarios') }}" class="btn-cancelar">
+
+            Cancelar
+
+        </a>
+
+        <button type="submit" class="btn-guardar">
+
+            Crear usuario
+
+        </button>
+
+    </div>
+    ```
+
+</form>
+
+<script>
+
+    (function () {
+
+        const rolSelect =
+            document.getElementById("rol");
+
+        const salaryContainer =
+            document.getElementById("salary-container");
+
+        const salaryInput =
+            document.getElementById("sueldo");
+
+        function updateSalaryField() {
+
+            const isProfesor =
+                rolSelect.value === "PROFESOR";
+
+            salaryContainer.style.display =
+                isProfesor
+                    ? "block"
+                    : "none";
+
+            salaryInput.required =
+                isProfesor;
+        }
+
+        rolSelect.addEventListener(
+            "change",
+            updateSalaryField
+        );
+
+        updateSalaryField();
+
+    })();
+
+</script>
+
+{% endblock %}

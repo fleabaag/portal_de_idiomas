@@ -1,0 +1,63 @@
+.auth-register .login-panel {
+    justify-content: flex-start;
+}
+
+.register-card {
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 4rem;
+}
+
+.register-card h2 {
+    color: var(--color-accent);
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 400;
+    font-size: 2rem;
+}
+
+.register-divider {
+    height: 3px;
+    background: var(--color-accent);
+    margin: 1.4rem 0;
+    opacity: .8;
+}
+
+.register-note {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    font-size: .85rem;
+    color: var(--color-accent);
+    opacity: .85;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+.back-link:visited {
+    color: var(--color-accent);
+}
+
+.back-link:hover {
+    opacity: .8;
+    color: var(--color-accent);
+}
+
+.back-icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    display: inline-block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.back-image .back-icon {
+    background-image: var(--icon-back-arrow);
+}

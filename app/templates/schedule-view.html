@@ -1,0 +1,17 @@
+{% macro render_schedule_groups(horarios_grouped) %}
+<div class="schedule-groups">
+    {% for grupo in horarios_grouped %}
+    <div class="schedule-pill-group">
+        <div class="days-pill">
+            {% for dia in grupo.dias %}
+            <span class="day-chip">{{ dia[:3] }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="time-pill">
+            {{ grupo.inicio }} a {{ grupo.fin }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endmacro %}

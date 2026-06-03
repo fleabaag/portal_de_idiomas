@@ -1,70 +1,178 @@
-{% extends "base.html" %}
+{% extends "dashboard-base.html" %}
 
-{% block navbar %}
-<div class="navbar">
-    <h1>Panel del Administrador</h1>
-    <div>
-        <a href="{{ url_for('admin.dashboard') }}">Idiomas</a>
-        <a href="{{ url_for('admin.cursos') }}">Cursos</a>
-        <a href="{{ url_for('admin.profesores') }}">Profesores</a>
-        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
-    </div>
-</div>
+{% block title %}
+Dashboard Administrador
 {% endblock %}
 
-{% block content %}
-<div class="dashboard-grid">
-    <div class="card">
-        <h2>Agregar idioma</h2>
-        <p class="muted">Estos idiomas aparecerán en el formulario de creación de cursos del profesor.</p>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="flash-alert alert {{ category }}">
-            {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
 
-        <form method="POST">
-            <div class="form-group">
-                <label for="nombre_idioma">Nombre del idioma</label>
-                <input type="text" name="nombre_idioma" id="nombre_idioma" required>
-            </div>
 
-            <div class="form-group">
-                <label for="descripcion_idioma">Descripción</label>
-                <input type="text" name="descripcion_idioma" id="descripcion_idioma" placeholder="Opcional">
-            </div>
+{% block sidebar_initials %}
+{% if current_user.primer_apellido and current_user.segundo_apellido %}
+{{ (current_user.primer_apellido[0] + current_user.segundo_apellido[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
 
-            <button type="submit">Guardar idioma</button>
-        </form>
+
+{% block sidebar_nav %}
+
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link sidebar-home active">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Resumen</span>
+</a>
+
+<a href="{{ url_for('admin.cursos') }}" class="sidebar-link sidebar-cursos">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Cursos</span>
+</a>
+
+<!-- <a href="#" class="sidebar-link sidebar-languages">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Idiomas</span>
+</a> -->
+
+<a href="{{ url_for('admin.usuarios') }}" class="sidebar-link sidebar-users">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Usuarios</span>
+</a>
+
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<span>Resumen del sistema</span>
+{% endblock %}
+
+
+
+{% block dashboard_content %}
+
+<!-- métricas principales -->
+<div class="stats-grid">
+
+    <div class="metric-card">
+        <span class="metric-label">Cursos</span>
+        <span class="metric-value">{{ total_cursos }}</span>
     </div>
 
-    <div class="card">
-        <h2>Idiomas registrados</h2>
-        <p class="muted">Lista de idiomas disponibles para crear cursos.</p>
+    <div class="metric-card">
+        <span class="metric-label">Idiomas</span>
+        <span class="metric-value">{{ total_idiomas }}</span>
+    </div>
 
-        {% if idiomas %}
-        <table>
+    <div class="metric-card">
+        <span class="metric-label">Profesores</span>
+        <span class="metric-value">{{ total_profesores }}</span>
+    </div>
+
+    <div class="metric-card">
+        <span class="metric-label">Alumnos</span>
+        <span class="metric-value">{{ total_alumnos }}</span>
+    </div>
+
+</div>
+
+<!-- estado de cursos -->
+<div class="section-header mt-32">
+    <h2>Estado de Cursos</h2>
+</div>
+
+<div class="course-status-grid">
+
+    <div class="status-card status-success">
+        <span>Publicados</span>
+        <strong>{{ cursos_publicados }}</strong>
+    </div>
+
+    <div class="status-card status-warning">
+        <span>Borradores</span>
+        <strong>{{ cursos_borrador }}</strong>
+    </div>
+
+    <div class="status-card status-secondary">
+        <span>Cerrados</span>
+        <strong>{{ cursos_cerrados }}</strong>
+    </div>
+
+</div>
+
+
+<!-- gestión rápida idiomas -->
+<div class="section-header mt-32">
+    <h2>Agregar Idioma</h2>
+</div>
+
+<div class="dashboard-card-admin">
+
+    <form method="POST" class="language-form create-user-form">
+
+        <input type="text" name="nombre_idioma" placeholder="Nombre del idioma" required>
+
+        <input type="text" name="descripcion_idioma" placeholder="Descripción">
+
+        <button type="submit" class="btn-action btn-publish">
+            Agregar
+        </button>
+
+    </form>
+
+</div>
+
+<!-- idiomas registrados -->
+<div class="section-header mt-32">
+    <h2>Idiomas Registrados</h2>
+</div>
+
+<div class="dashboard-card-admin">
+
+    {% if idiomas %}
+    <table class="languages-table">
+
+        <thead>
             <tr>
-                <th>ID</th>
                 <th>Idioma</th>
                 <th>Descripción</th>
             </tr>
+        </thead>
+
+        <tbody>
+
             {% for idioma in idiomas %}
             <tr>
-                <td>{{ idioma.id_idioma }}</td>
-                <td>{{ idioma.nombre_idioma }}</td>
-                <td>{{ idioma.descripcion_idioma or '-' }}</td>
+
+                <td>
+
+                    <span class="language-badge">
+                        {{ idioma.nombre_idioma }}
+                    </span>
+
+                </td>
+
+                <td>
+                    {{ idioma.descripcion_idioma or 'Sin descripción' }}
+                </td>
+
             </tr>
             {% endfor %}
-        </table>
-        {% else %}
-        <p class="muted">No hay idiomas cargados todavía.</p>
-        {% endif %}
+
+        </tbody>
+
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p>No hay idiomas registrados.</p>
     </div>
+    {% endif %}
+
 </div>
+
+
+
 {% endblock %}

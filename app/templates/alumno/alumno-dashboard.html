@@ -1,100 +1,105 @@
-{% extends "base.html" %}
+{% extends "dashboard-base.html" %}
 
-{% block navbar %}
-<div class="navbar">
-    <h1>Panel del Alumno</h1>
-    <div>
-        <a href="{{ url_for('alumno.dashboard') }}">Catálogo</a>
-        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
-    </div>
-</div>
+{% block title %}
+Dashboard Alumno
 {% endblock %}
 
-{% block content %}
-<div class="card">
-    <h2>Bienvenido, {{ current_user.nombre_completo }}</h2>
-    <p class="muted">Explora los cursos disponibles y inscríbete a los que te interesen.</p>
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div class="flash-alert alert {{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+{% block sidebar_initials %}
+{{ current_user.nombre[0]|upper }}
+{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{{ url_for('alumno.dashboard') }}" class="sidebar-link active sidebar-inscribir">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Inscribir cursos</span>
+</a>
+
+<a href="{{ url_for('alumno.cursos_inscritos') }}" class="sidebar-link sidebar-courses">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Cursos inscritos</span>
+</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('alumno.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<span>Inscribir cursos</span>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="section-header">
+    <h2>Cursos disponibles</h2>
 </div>
 
-<div class="card">
-    <h2>Catálogo de cursos disponibles</h2>
-    <p class="muted">Cursos publicados por los profesores. Da click en "Inscribirse" para registrarte.</p>
+{% if cursos_por_idioma %}
 
-    {% if cursos %}
-        <table>
-            <tr>
-                <th>Idioma</th>
-                <th>Nivel</th>
-                <th>Periodo</th>
-                <th>Año</th>
-                <th>Profesor</th>
-                <th>Descripción</th>
-                <th>Acciones</th>
-            </tr>
-            {% for curso in cursos %}
-            <tr>
-                <td>{{ curso.idioma.nombre_idioma }}</td>
-                <td>{{ curso.nivel.value }}</td>
-                <td>{{ curso.periodo.value }}</td>
-                <td>{{ curso.anio }}</td>
-                <td>{{ curso.profesor.nombre_completo }}</td>
-                <td>{{ curso.descripcion_curso or 'Sin descripción' }}</td>
-                <td class="actions-cell">
-                    {% if curso.id_curso in ids_inscritos %}
-                        <span class="muted">Ya inscrito ✓</span>
-                    {% else %}
-                        <form method="POST" action="{{ url_for('alumno.inscribir_curso', id_curso=curso.id_curso) }}" class="inline-form">
-                            <button type="submit" class="button-small">Inscribirse</button>
-                        </form>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p class="muted">No hay cursos publicados todavía. Vuelve más tarde.</p>
-    {% endif %}
+{% for idioma, cursos in cursos_por_idioma.items() %}
+<div class="courses-section mt-32">
+
+    <div class="section-header">
+        <h3>{{ idioma }}</h3>
+    </div>
+
+    <div class="dashboard-grid">
+
+        {% for curso in cursos %}
+        <div class="dashboard-card course-card">
+
+            <div class="course-flag">
+
+                <div class="flag-placeholder">{{ curso.idioma.nombre_idioma[:2].upper() }}</div>
+
+            </div>
+
+            <div class="course-info">
+                <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
+                <p class="course-period">{{ curso.periodo.value }} {{ curso.anio }}</p>
+                <p class="course-students">
+                    Profesor: {{ curso.profesor.nombre }}
+                </p>
+            </div>
+
+
+
+            <div class="course-actions">
+
+                <a href="{{ url_for('alumno.curso_detalle', id_curso=curso.id_curso) }}"
+                    class="btn-action btn-detalles-light">
+                    <span class="btn-action-icon"></span>
+                    Ver Detalles
+                </a>
+
+                {% if curso.id_curso in ids_inscritos %}
+                <span class="btn-action btn-edit disabled">Ya inscrito</span>
+                {% else %}
+                <form method="POST" action="{{ url_for('alumno.inscribir_curso', id_curso=curso.id_curso) }}"
+                    onsubmit="return confirm('¿Deseas inscribirte en este curso?')">
+
+                    <button type="submit" class="btn-action btn-archive">
+                        <span class="btn-action-icon"></span>
+                        Inscribirme
+                    </button>
+                </form>
+                {% endif %}
+
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
 </div>
+{% endfor %}
 
-<div class="card">
-    <h2>Mis cursos inscritos</h2>
-    <p class="muted">Cursos en los que ya estás inscrito y desde donde puedes consultar materiales.</p>
-
-    {% if cursos_inscritos %}
-        <table>
-            <tr>
-                <th>Idioma</th>
-                <th>Nivel</th>
-                <th>Periodo</th>
-                <th>Año</th>
-                <th>Profesor</th>
-                <th>Materiales</th>
-                <th>Acciones</th>
-            </tr>
-            {% for curso in cursos_inscritos %}
-            <tr>
-                <td>{{ curso.idioma.nombre_idioma }}</td>
-                <td>{{ curso.nivel.value }}</td>
-                <td>{{ curso.periodo.value }}</td>
-                <td>{{ curso.anio }}</td>
-                <td>{{ curso.profesor.nombre_completo }}</td>
-                <td>{{ curso.materiales|length }}</td>
-                <td class="actions-cell">
-                    <a href="{{ url_for('alumno.curso_detalle', id_curso=curso.id_curso) }}" class="button-link">Ver materiales</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p class="muted">Todavía no tienes cursos inscritos.</p>
-    {% endif %}
+{% else %}
+<div class="empty-state">
+    <p>No hay cursos disponibles.</p>
 </div>
+{% endif %}
+
 {% endblock %}

@@ -1,83 +1,111 @@
-{% extends "base.html" %}
+{% extends "auth-base.html" %}
 
-{% block navbar %}
-<div class="navbar">
-    <h1>Portal de Idiomas</h1>
-</div>
-{% endblock %}
+{% block title %}Regístrate{% endblock %}
 
-{% block content %}
+{% block auth_content %}
+<div class="login-layout">
 
-<div style="max-width: 450px; margin: 5rem auto;">
-
-    <div class="card">
-
-        <h2>Regístrate</h2>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="flash-alert alert" {{ category }}>
-            {{ message }}
+    <!-- Imagen izquierda -->
+    <div class="login-visual auth-register">
+        <img src="{{ url_for('static', filename='img/fondo_login.png') }}" alt="Portal de Idiomas">
+        <div class="image-credit">
+            Imagen: El Mundo · Remedios Varo (1958)
         </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-
-        <form method="POST">
-
-            <div class="form-group">
-                <label>Nombre(s)*</label>
-                <input type="text" name="nombre" required value="{{ form_data.nombre if form_data else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>Primer apellido*</label>
-                <input type="text" name="primer_apellido" required
-                    value="{{ form_data.primer_apellido if form_data else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>Segundo apellido</label>
-                <input type="text" name="segundo_apellido"
-                    value="{{ form_data.segundo_apellido if form_data else '' }}">
-            </div>
-
-            <hr>
-
-            <div class="form-group">
-                <label>E-mail*</label>
-                <input type="email" name="email" required value="{{ form_data.email if form_data else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>Nueva contraseña*</label>
-
-                <div class="input-wrapper">
-
-                    <input type="password" name="password" id="password" required>
-
-                    <button type="button" id="togglePassword" class="toggle-password">
-                        <img id="eyeIcon" src="{{ url_for('static', filename='img/view.png') }}">
-                    </button>
-
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Repite tu nueva contraseña*</label>
-
-                <input type="password" name="confirm_password" required>
-            </div>
-
-            <button type="submit">
-                Regístrate
-            </button>
-
-        </form>
-
     </div>
 
-</div>
+    <!-- Panel derecho -->
+    <div class="login-panel">
 
+        <h1 class="login-title">Portal de Idiomas</h1>
+
+        <div class="login-card register-card">
+
+            <h2>Regístrate</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-alert alert {{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+
+                <div class="form-group-auth">
+                    <label>Nombre(s)*</label>
+                    <input type="text" name="nombre" placeholder="Ejemplo: Juan" required
+                        value="{{ form_data.nombre if form_data else '' }}">
+                </div>
+
+                <div class="form-group-auth">
+                    <label>Primer apellido*</label>
+                    <input type="text" name="primer_apellido" placeholder="Ejemplo: Pérez" required
+                        value="{{ form_data.primer_apellido if form_data else '' }}">
+                </div>
+
+                <div class="form-group-auth">
+                    <label>Segundo apellido</label>
+                    <input type="text" name="segundo_apellido" placeholder="Ejemplo: Salgado"
+                        value="{{ form_data.segundo_apellido if form_data else '' }}">
+                </div>
+
+                <div class="register-divider"></div>
+
+                <div class="form-group-auth">
+                    <label>E-mail*</label>
+                    <input type="email" name="email" placeholder="Ejemplo: email@unam.mx" required
+                        value="{{ form_data.email if form_data else '' }}">
+                </div>
+
+                <div class="form-group-auth">
+                    <label>Nueva contraseña*</label>
+
+                    <div class="input-wrapper">
+                        <input type="password" name="password" id="password" placeholder="Ingresa tu contraseña"
+                            required>
+
+                        <button type="button" id="togglePassword" class="toggle-password">
+
+                            <img id="eyeIcon" src="{{ url_for('static', filename='img/view.png') }}"
+                                alt="Ver contraseña">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group-auth">
+                    <label>Repite tu nueva contraseña*</label>
+
+                    <div class="input-wrapper">
+                        <input type="password" name="confirm_password" id="confirm_password"
+                            placeholder="Ingresa de nuevo tu contraseña" required>
+
+                        <button type="button" id="toggleConfirmPassword" class="toggle-password">
+
+                            <img id="confirmEyeIcon" src="{{ url_for('static', filename='img/view.png') }}"
+                                alt="Ver contraseña">
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-primary" type="submit">
+                    REGÍSTRATE
+                </button>
+
+                <p class="register-note">
+                    Los campos con asterisco (*) son obligatorios
+                </p>
+
+                <a href="{{ url_for('auth.login') }}" class="back-link back-image">
+                    <span class="back-icon"></span>
+                    Volver a Inicio de Sesión
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+</div>
 {% endblock %}

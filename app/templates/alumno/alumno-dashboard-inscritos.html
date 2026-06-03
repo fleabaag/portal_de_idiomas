@@ -1,0 +1,79 @@
+{% extends "dashboard-base.html" %}
+
+{% block title %}
+Cursos Inscritos
+{% endblock %}
+
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
+
+{% block sidebar_initials %}
+{% if current_user.apellido_paterno and current_user.apellido_materno %}
+{{ (current_user.apellido_paterno[0] + current_user.apellido_materno[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{{ url_for('alumno.dashboard') }}" class="sidebar-link sidebar-inscribir">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Inscribir cursos</span>
+</a>
+
+<a href="{{ url_for('alumno.cursos_inscritos') }}" class="sidebar-link active sidebar-courses">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Cursos inscritos</span>
+</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('alumno.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<span>Cursos inscritos</span>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="section-header">
+    <h2>Mis cursos inscritos</h2>
+</div>
+
+{% if cursos_inscritos %}
+<div class="dashboard-grid">
+
+    {% for curso in cursos_inscritos %}
+    <div class="dashboard-card course-card">
+        <div class="course-flag">
+
+            <div class="flag-placeholder">{{ curso.idioma.nombre_idioma[:2].upper() }}</div>
+
+        </div>
+        <div class="course-info">
+            <h3>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</h3>
+            <p class="course-period">{{ curso.periodo.value }} {{ curso.anio }}</p>
+            <p class="course-students">
+                Profesor: {{ curso.profesor.nombre }}
+            </p>
+        </div>
+
+        <div class="course-actions">
+            <a href="{{ url_for('alumno.curso_detalle', id_curso=curso.id_curso) }}" class="btn-action btn-detalles-light">
+                <span class="btn-action-icon"></span>
+                Ver detalles
+            </a>
+        </div>
+
+    </div>
+    {% endfor %}
+
+</div>
+
+{% else %}
+<div class="empty-state">
+    <p>Aún no estás inscrito en ningún curso.</p>
+</div>
+{% endif %}
+
+{% endblock %}

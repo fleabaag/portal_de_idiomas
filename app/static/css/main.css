@@ -1,0 +1,266 @@
+@import url("./base/reset.css");
+@import url("./base/variables.css");
+@import url("./base/typography.css");
+@import url("./base/utilities.css");
+
+@import url("./layout/auth.css");
+@import url("./layout/dashboard.css");
+@import url("./layout/sidebar.css");
+@import url("./layout/breadcrumbs.css");
+
+@import url("./components/buttons.css");
+@import url("./components/forms.css");
+@import url("./components/cards.css");
+@import url("./components/tables.css");
+@import url("./components/modals.css");
+
+@import url("./pages/admin.css");
+@import url("./pages/alumno.css");
+@import url("./pages/login.css");
+@import url("./pages/profesor.css");
+@import url("./pages/register.css");
+
+/* FLASH ALERTS ESTILOS */
+.flash-alert {
+    padding: var(--space-md) var(--space-md);
+    margin-bottom: var(--space-md);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-left: 5px solid;
+    backdrop-filter: blur(4px);
+    transition: opacity .4s ease;
+    box-shadow: var(--shadow-md);
+    color: var(--color-text-dark);
+}
+
+.flash-alert.alert {
+    color: white;
+}
+
+.flash-alert.success {
+    background: rgba(111, 159, 90, .16);
+    border-color: var(--alert-success);
+}
+
+.flash-alert.error {
+    background: rgba(201, 74, 74, .18);
+    border-color: var(--alert-error);
+}
+
+.flash-alert.warning {
+    background: rgba(215, 169, 74, .18);
+    border-color: var(--alert-warning);
+}
+
+.flash-alert.info {
+    background: rgba(138, 168, 200, .16);
+    border-color: var(--alert-info);
+}
+
+.flash-alert.validation {
+    background: rgba(185, 130, 90, .18);
+    border-color: var(--alert-validation);
+}
+
+.flash-alert.security {
+    background: rgba(143, 107, 184, .16);
+    border-color: var(--alert-security);
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+}
+
+
+/* COURSES SECTION */
+.courses-section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.section-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.dashboard-card {
+    background: var(--color-panel);
+    color: var(--color-text);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.dashboard-card-admin {
+    background: rgb(255, 255, 255);
+    color: var(--color-text-dark);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.dashboard-card-admin:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.course-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+}
+
+.course-flag {
+    width: 100%;
+    height: 140px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flag-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.flag-placeholder {
+    font-size: 32px;
+    font-weight: 700;
+    color: #999;
+}
+
+
+.course-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-link {
+    display: inline-block;
+    color: #5c5c3c;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.btn-link:hover {
+    background-color: #f9f9f9;
+    border-color: #5c5c3c;
+}
+
+/* DRAFT AND ARCHIVED BADGES */
+.draft-badge,
+.archived-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.draft-badge {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+
+
+.draft-card,
+.archived-card {
+    opacity: 0.8;
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    padding: 60px 40px;
+    color: #999;
+    font-size: 16px;
+}
+
+/* UTILITIES */
+.mt-16 {
+    margin-top: 16px;
+}
+
+.mt-32 {
+    margin-top: 32px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80px;
+    }
+    
+    .sidebar-header {
+        justify-content: center;
+    }
+    
+    .sidebar-user-info {
+        display: none;
+    }
+    
+    .sidebar-nav {
+        gap: 4px;
+    }
+    
+    .sidebar-link {
+        justify-content: center;
+        padding: 12px;
+    }
+    
+    .dashboard-main {
+        margin-left: 80px;
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+}

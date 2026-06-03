@@ -1,99 +1,473 @@
-{% extends "base.html" %}
+{% extends "dashboard-base.html" %}
 
-{% block navbar %}
-<div class="navbar">
-    <h1>Detalle de Curso</h1>
-    <div>
-        <a href="{{ url_for('admin.dashboard') }}">Idiomas</a>
-        <a href="{{ url_for('admin.cursos') }}">Cursos</a>
-        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
-    </div>
-</div>
+{% block title %}
+Detalle de Curso - Administrador
 {% endblock %}
 
-{% block content %}
-<div class="card">
-    <h2>{{ curso.idioma.nombre_idioma }} - {{ curso.nivel.value }}</h2>
-    <p class="muted">Vista administrativa del curso y sus calificaciones.</p>
+<!-- ===================== SIDEBAR ===================== -->
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div class="flash-alert alert {{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+{% block sidebar_user %}
+{{ current_user.nombre }}
+{% endblock %}
 
-    <table>
-        <tr><th>Campo</th><th>Valor</th></tr>
-        <tr><td>ID</td><td>{{ curso.id_curso }}</td></tr>
-        <tr><td>Idioma</td><td>{{ curso.idioma.nombre_idioma }}</td></tr>
-        <tr><td>Profesor</td><td>{{ curso.profesor.nombre_completo }}</td></tr>
-        <tr><td>Nivel</td><td>{{ curso.nivel.value }}</td></tr>
-        <tr><td>Periodo</td><td>{{ curso.periodo.value }} {{ curso.anio }}</td></tr>
-        <tr><td>Estado</td><td>{{ curso.estado.value }}</td></tr>
-        <tr><td>Descripción</td><td>{{ curso.descripcion_curso or 'Sin descripción' }}</td></tr>
-        <tr><td>Inscripciones</td><td>{{ curso.inscripciones|length }}</td></tr>
-        <tr><td>Materiales</td><td>{{ curso.materiales|length }}</td></tr>
-    </table>
+{% block sidebar_initials %}
+{% if current_user.primer_apellido and current_user.segundo_apellido %}
+{{ (current_user.primer_apellido[0] + current_user.segundo_apellido[0])|upper }}
+{% else %}
+{{ current_user.nombre[0]|upper }}
+{% endif %}
+{% endblock %}
 
-    <div class="actions-cell mt-16">
-        <a href="{{ url_for('admin.editar_curso', id_curso=curso.id_curso) }}" class="button-link">Editar curso</a>
-        {% if curso.estado.name != 'CERRADO' %}
-        <form method="POST" action="{{ url_for('admin.cerrar_curso', id_curso=curso.id_curso) }}" class="inline-form">
-            <button type="submit" class="button-small">Cerrar curso</button>
-        </form>
-        {% endif %}
+{% block sidebar_nav %}
+
+<a href="{{ url_for('admin.dashboard') }}"
+   class="sidebar-link sidebar-home">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Resumen</span>
+</a>
+
+<a href="{{ url_for('admin.cursos') }}"
+   class="sidebar-link sidebar-cursos active">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Cursos</span>
+</a>
+
+<!-- <a href="#"
+   class="sidebar-link sidebar-languages">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Idiomas</span>
+</a> -->
+
+<a href="{{ url_for('admin.usuarios') }}"
+   class="sidebar-link sidebar-users">
+    <span class="sidebar-icon"></span>
+    <span class="sidebar-text">Usuarios</span>
+</a>
+
+{% endblock %}
+
+<!-- ===================== BREADCRUMBS ===================== -->
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.dashboard') }}">Inicio</a>
+<span class="breadcrumb-separator">/</span>
+<a href="{{ url_for('admin.cursos') }}">Cursos</a>
+<span class="breadcrumb-separator">/</span>
+<span>{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}</span>
+{% endblock %}
+
+<!-- ===================== CONTENIDO ===================== -->
+
+{% block dashboard_content %}
+
+<!-- HEADER -->
+<div class="course-detail-header">
+    <div class="course-header-top">
+
+        <div class="course-title-section">
+            <h1>{{ curso.idioma.nombre_idioma }}</h1>
+            <p class="course-level">{{ curso.nivel.value }}</p>
+
+            <div class="course-meta">
+                <span class="meta-item">
+                    <strong>Período:</strong>
+                    {{ curso.periodo.value }} {{ curso.anio }}
+                </span>
+
+                <span class="meta-item">
+                    <strong>Estado:</strong>
+
+                    {% if curso.estado.name == 'PUBLICADO' %}
+                    <span class="badge badge-success">Publicado</span>
+
+                    {% elif curso.estado.name == 'BORRADOR' %}
+                    <span class="badge badge-warning">Borrador</span>
+
+                    {% else %}
+                    <span class="badge badge-secondary">Archivado</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- ACCIONES ADMIN -->
+        <div class="course-header-actions">
+
+            {% if curso.estado.name != 'CERRADO' %}
+            <button id="toggle-edit-course" class="btn-action btn-edit">
+                <span class="btn-action-icon"></span>
+                Editar curso
+            </button>
+            {% endif %}
+
+            {% if curso.estado.name == 'BORRADOR' %}
+            <form method="POST" action="{{ url_for('admin.publicar_curso', id_curso=curso.id_curso) }}"
+                class="inline-form"
+                onsubmit="return confirm('¿Publicar este curso? Una vez publicado será visible para inscripción.');">
+
+                <button type="submit" class="btn-action btn-publish">
+                    <span class="btn-action-icon"></span>
+                    Publicar
+                </button>
+            </form>
+            {% endif %}
+
+            {% if curso.estado.name == 'PUBLICADO' %}
+            <form method="POST" action="{{ url_for('admin.archivar_curso', id_curso=curso.id_curso) }}"
+                class="inline-form"
+                onsubmit="return confirm('¿Archivar este curso? Dejará de estar disponible para nuevas inscripciones.');">
+
+                <button type="submit" class="btn-action btn-archive">
+                    <span class="btn-action-icon"></span>
+                    Archivar
+                </button>
+            </form>
+            {% endif %}
+
+            {% if curso.estado.name != 'PUBLICADO' %}
+            <form method="POST" action="{{ url_for('admin.eliminar_curso', id_curso=curso.id_curso) }}"
+                class="inline-form"
+                onsubmit="return confirm('¿Eliminar este curso? Esta acción no se puede deshacer.');">
+
+                <button type="submit" class="btn-action btn-delete">
+                    <span class="btn-action-icon"></span>
+                    Eliminar
+                </button>
+            </form>
+            {% endif %}
+
+        </div>
+
     </div>
 </div>
 
-<div class="card">
-    <h2>Calificaciones</h2>
-    <p class="muted">Revisa la nota registrada para cada alumno inscrito.</p>
 
-    {% if curso.inscripciones %}
-    <table>
-        <tr>
-            <th>Alumno</th>
-            <th>Email</th>
-            <th>Fecha inscripción</th>
-            <th>Calificación</th>
-        </tr>
-        {% for inscripcion in curso.inscripciones %}
-        <tr>
-            <td>{{ inscripcion.alumno.nombre_completo }}</td>
-            <td>{{ inscripcion.alumno.email }}</td>
-            <td>{{ inscripcion.fecha_inscripcion.strftime('%Y-%m-%d') if inscripcion.fecha_inscripcion else '-' }}</td>
-            <td>{{ inscripcion.calificacion if inscripcion.calificacion is not none else 'Sin calificar' }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+{% if curso.estado.name != 'CERRADO' %}
+<form id="edit-course-form" method="POST" action="{{ url_for('admin.curso_detalle', id_curso=curso.id_curso) }}"
+    style="display:none;">
+
+    <div class="course-section">
+        <h3>Editar curso</h3>
+
+        {% if curso.estado.name == 'PUBLICADO' %}
+        <div class="info-box" style="background-color:#e3f2fd;border-left:4px solid #2196F3;margin-bottom:1.5rem;">
+            <p>
+                <span class="info-box-icon"></span>
+
+                <strong>Curso publicado:</strong>
+                Cuando un curso está publicado únicamente pueden modificarse
+                la descripción y los horarios. Idioma, año, nivel y período
+                permanecen bloqueados.
+            </p>
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label for="id_idioma">Idioma *</label>
+
+                <select name="id_idioma" id="id_idioma" {% if curso.estado.name=='PUBLICADO' %}disabled{% endif %}
+                    required>
+
+                    <option value="">Selecciona un idioma</option>
+
+                    {% for idioma in curso.idioma.__class__.query.order_by(
+                    curso.idioma.__class__.nombre_idioma
+                    ).all() %}
+                    <option value="{{ idioma.id_idioma }}" {% if idioma.id_idioma==curso.id_idioma %}selected{% endif
+                        %}>
+                        {{ idioma.nombre_idioma }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="anio">Año *</label>
+
+                <input type="number" name="anio" id="anio" min="2000" max="2100" value="{{ curso.anio }}" {% if
+                    curso.estado.name=='PUBLICADO' %}disabled{% endif %} required>
+            </div>
+
+        </div>
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label for="nivel">Nivel *</label>
+
+                <select name="nivel" id="nivel" {% if curso.estado.name=='PUBLICADO' %}disabled{% endif %} required>
+
+                    {% for nivel in Niveles %}
+                    <option value="{{ nivel.name }}" {% if nivel==curso.nivel %}selected{% endif %}>
+                        {{ nivel.value }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="periodo">Periodo *</label>
+
+                <select name="periodo" id="periodo" {% if curso.estado.name=='PUBLICADO' %}disabled{% endif %} required>
+
+                    {% for periodo in PeriodoEnum %}
+                    <option value="{{ periodo.name }}" {% if periodo==curso.periodo %}selected{% endif %}>
+                        {{ periodo.value }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-group full-width">
+            <label for="descripcion_curso">Descripción</label>
+
+            <textarea name="descripcion_curso" id="descripcion_curso"
+                rows="4">{{ curso.descripcion_curso or '' }}</textarea>
+        </div>
+    </div>
+
+    <!-- HORARIOS -->
+    <div class="course-section">
+
+        <div class="section-header-modal">
+            <h3>Horarios</h3>
+
+            <button type="button" id="btn-add-schedule" class="btn-add-schedule">
+                + Agregar horario
+            </button>
+        </div>
+
+        <div id="horarios-container">
+
+            <script>
+                window.initialHorarios = JSON.parse(
+                    '{{ horarios_grouped | tojson | safe }}'
+                );
+
+                window.scheduleConfig = {
+                    formId: "edit-course-form",
+                    containerId: "horarios-container",
+                    maxHorarios: 3
+                };
+            </script>
+
+        </div>
+
+        <p class="form-info">
+            Máximo 3 horarios. Días: lunes a sábado.
+            La hora de inicio debe ser anterior a la hora de término.
+        </p>
+
+    </div>
+
+    <div style="display:flex;gap:1rem;justify-content:flex-end;margin-bottom:2rem;">
+        <button type="button" id="cancel-edit" class="btn-cancelar">
+            Cancelar
+        </button>
+
+        <button type="submit" class="btn-guardar">
+            Guardar cambios
+        </button>
+    </div>
+
+</form>
+
+{% else %}
+
+<div class="info-box">
+    <p>Este curso está cerrado y no puede editarse.</p>
+</div>
+
+{% endif %}
+
+<!-- ===================== INFORMACIÓN DEL PROFESOR ===================== -->
+
+<div class="course-section info-section">
+    <div class="section-header-detail">
+        <h2>
+            <span class="section-icon section-students-icon"></span>
+            Profesor asignado
+        </h2>
+    </div>
+
+    <div class="description-box">
+        <p><strong>Nombre:</strong> {{ curso.profesor.nombre_completo }}</p>
+        <p><strong>Correo:</strong> {{ curso.profesor.email }}</p>
+    </div>
+</div>
+
+<!-- ===================== DESCRIPCIÓN ===================== -->
+
+<div class="course-section info-section">
+    <div class="section-header-detail">
+        <h2>
+            <span class="section-icon section-info-icon"></span>
+            Información
+        </h2>
+    </div>
+
+    {% if curso.descripcion_curso %}
+    <div class="description-box">
+        <label>Descripción del curso:</label>
+        <p>{{ curso.descripcion_curso }}</p>
+    </div>
     {% else %}
-    <p class="muted">Todavía no hay alumnos inscritos en este curso.</p>
+    <p class="text-muted">Este curso no tiene descripción.</p>
     {% endif %}
 </div>
 
-<div class="card">
-    <h2>Materiales</h2>
-    <p class="muted">Archivos asociados al curso.</p>
+<!-- ===================== HORARIOS ===================== -->
+
+<div class="course-section schedules-section">
+    <div class="section-header-detail">
+        <h2>
+            <span class="section-icon section-schedule-icon"></span>
+            Horarios
+        </h2>
+    </div>
+
+    {% if curso.horario %}
+    {{ render_schedule_groups(horarios_grouped) }}
+    {% else %}
+    <p class="text-muted">No hay horarios registrados.</p>
+    {% endif %}
+</div>
+
+<!-- ===================== MATERIALES ===================== -->
+
+<div class="course-section materials-section">
+    <div class="section-header-detail">
+        <h2>
+            <span class="section-icon section-material-icon"></span>
+            Material del curso
+        </h2>
+    </div>
 
     {% if curso.materiales %}
-    <table>
-        <tr>
-            <th>Título</th>
-            <th>Tipo</th>
-            <th>Archivo</th>
-        </tr>
-        {% for material in curso.materiales %}
-        <tr>
-            <td>{{ material.titulo }}</td>
-            <td>{{ material.tipo_archivo|upper if material.tipo_archivo else 'Documento' }}</td>
-            <td><a href="{{ material.url_archivo }}" class="button-link">Descargar</a></td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="materials-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Descarga</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for material in curso.materiales %}
+                <tr>
+                    <td>{{ material.titulo }}</td>
+
+                    <td>
+                        <span class="badge badge-type">
+                            {{ material.tipo_archivo|upper }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <a href="{{ material.url_archivo }}" class="btn-action btn-download">
+                            <span class="btn-action-icon"></span>
+                            Descargar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-    <p class="muted">Aún no se han subido materiales para este curso.</p>
+    <p class="text-muted">No hay materiales registrados.</p>
     {% endif %}
 </div>
+
+<!-- ===================== ALUMNOS ===================== -->
+
+<div class="course-section students-section">
+    <div class="section-header-detail">
+        <h2>
+            <span class="section-icon section-students-icon"></span>
+            Alumnos inscritos
+        </h2>
+
+        <span class="student-count">
+            Total: {{ curso.inscripciones|length }}
+        </span>
+    </div>
+
+    {% if curso.inscripciones %}
+    <div class="students-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Calificación</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for inscripcion in curso.inscripciones %}
+                <tr>
+                    <td>{{ inscripcion.alumno.nombre_completo }}</td>
+                    <td>{{ inscripcion.alumno.email }}</td>
+
+                    <td>
+                        {% if inscripcion.calificacion is not none %}
+                        <span class="grade-badge">
+                            {{ inscripcion.calificacion }}
+                        </span>
+                        {% else %}
+                        <span class="grade-empty">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No hay alumnos inscritos.</p>
+    {% endif %}
+</div>
+
+<script>
+(function () {
+
+    const toggleBtn = document.getElementById('toggle-edit-course');
+    const form = document.getElementById('edit-course-form');
+    const cancelBtn = document.getElementById('cancel-edit');
+
+    if (toggleBtn && form) {
+        toggleBtn.addEventListener('click', () => {
+
+            form.style.display =
+                form.style.display === 'none'
+                    ? 'block'
+                    : 'none';
+
+            if (form.style.display === 'block') {
+                window.scrollTo({
+                    top: form.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    }
+
+    if (cancelBtn && form) {
+        cancelBtn.addEventListener('click', () => {
+            form.style.display = 'none';
+        });
+    }
+
+})();
+</script>
+
+<script src="{{ url_for('static', filename='js/schedule-manager.js') }}"></script>
+
 {% endblock %}
