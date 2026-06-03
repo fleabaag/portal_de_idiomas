@@ -54,7 +54,7 @@ def dashboard():
     """
     # Protege la ruta del administrador
     if not current_user.is_admin():
-        return redirect(url_for("/"))
+        return redirect(url_for("auth.login"))
 
     if request.method == "POST":
         nombre_idioma = request.form.get("nombre_idioma", "").strip()

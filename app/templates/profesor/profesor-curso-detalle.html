@@ -257,6 +257,23 @@ Detalle de Curso - Profesor
         {% endif %}
     </div>
 
+    <div class="actions-cell mt-16">
+        <a href="{{ url_for('profesor.editar_curso', id_curso=curso.id_curso) }}" class="button-link">Editar curso</a>
+        {% if curso.estado.name != 'CERRADO' %}
+        <form method="POST" action="{{ url_for('profesor.cerrar_curso', id_curso=curso.id_curso) }}" class="inline-form">
+            <button type="submit" class="button-small">Cerrar curso</button>
+        </form>
+        {% endif %}
+        {% if curso.estado.name != 'PUBLICADO' %}
+        <form method="POST"
+              action="{{ url_for('profesor.eliminar_curso', id_curso=curso.id_curso) }}"
+              class="inline-form"
+              onsubmit="return confirm('¿Eliminar el curso &quot;{{ curso.idioma.nombre_idioma }} {{ curso.nivel.value }}&quot;? Se borraran tambien sus materiales e inscripciones.');">
+            <button type="submit" class="button-small button-danger">Eliminar curso</button>
+        </form>
+        {% endif %}
+    </div>
+
     {% if curso.estado.name == 'BORRADOR' %}
     <div class="info-box">
         <span class="info-box-icon"></span>
